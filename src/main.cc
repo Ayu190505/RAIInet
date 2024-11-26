@@ -95,7 +95,7 @@ int main(int argc, const char* argv[]){
                                     '----------------'  '----------------'  '----------------'  '----------------'  '----------------'  '----------------'  '----------------'   
 
     )" << endl;
-    // start of game loop within controller class
+    // Start of game loop within Controller class
     shared_ptr<Game> game = make_shared<Game>(numPlayers, playerLinkOrders, playerAbilities, graphicsEnabled);
     Controller controller{game, numPlayers, graphicsEnabled, multipleDisplay};
     controller.run();

@@ -16,8 +16,8 @@ string Err::reenterCommand = "Re-enter your command";
 string Err::invalidPlayerNumber = "Cannot have players 3 or 4 for a two player game! Change player number to 4 by specifying [player-four] first!";
 
 // Ability Errors
-string Err::invalidAbilities = "Abilities can only be of the form [L] [F] [D] [S] [P], and you may have a total of 5 and a maximum of 2 of each ability";
-string Err::invalidAbility = "Abilities can only be of the form [L] [F] [D] [S] [P]";
+string Err::invalidAbilities = "Abilities can only be of the form [L] [F] [D] [S] [P] [T] [W], and you may have a total of 5 and a maximum of 2 of each ability";
+string Err::invalidAbility = "Abilities can only be of the form [L] [F] [D] [S] [P] [T] [W]";
 string Err::invalidAbilityIndex = "Expected an ability index from [1, 5]";
 string Err::expectedCoordinatesForFireWall = "Expected coordinates from firewall in the form <row> <col>";
 string Err::expectedCoordinatesForWarp = "Expected coordinates from firewall in the form <row1> <col1> <row2> <col2>";

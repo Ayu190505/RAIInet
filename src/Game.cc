@@ -220,6 +220,8 @@ void Game::move(char link, const string &direction) {
         int warpToCol = newCell.getWarpCol();
         Cell &warpCell = board->getCell(warpToRow, warpToCol);
         warpCell.setContent(currLink->getId());
+        currLink->setRow(warpToRow);
+        currLink->setCol(warpToCol);
         warpCell.setWarp(false);
         newCell.setWarp(false);
     }

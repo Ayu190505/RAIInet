@@ -26,7 +26,7 @@ Ability::Ability(char code, int id) : id{id}, isActivated{false} {
             case 'I':   
                 ability = Abilities::Imprison;
                 break;
-            case 'U':   
+            case 'W':   
                 ability = Abilities::Warp;
                 break;
             default: throw(Err::invalidAbility + ", hence " + std::to_string(code) + " is invalid.");
