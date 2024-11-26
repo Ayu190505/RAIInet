@@ -62,7 +62,18 @@ void Game::useAbility(int abilityNumber, int row, int col) {
     if (!(row >= 0 && row < numRow && col >= 0 && col < numCol)) throw out_of_range(Err::invalidCoordinates);
     useFirewall(row, col);
     players[playerIndex]->useAbility(abilityNumber);
-    checkGameOver();
+    checkGameOver(); // is this necessary? you can't win after placing a firewall
+    notifyObservers();
+}
+
+void Game::useAbility(int abilityNumber, int r1, int c1, int r2, int c2) {
+    const int numRow = (playerCount == 2) ? 8 : 10;
+    int playerIndex = currentTurn - 1;
+    shared_ptr<Ability> ability = players[playerIndex]->getAbility(abilityNumber);
+    if (ability->getIsActivated()) throw runtime_error(Err::abilityAlreadyUsed(ability->getAbilityName(), ability->getAbilityID()));
+    if (!(r1 >= 0 && r1 < numRow && c1 >= 0 && c1 < numCol) || !(r2 >= 0 && r2 < numRow && c2 >= 0 && c2 < numCol)) throw out_of_range(Err::invalidCoordinates);
+    useWarp(r1, c1, r2, c2);
+    players[playerIndex]->useAbility(abilityNumber);
     notifyObservers();
 }
 
@@ -79,6 +90,8 @@ void Game::useAbility(int abilityNumber, const string &abilityName, char link) {
         usePolarise(link);
     } else if (abilityName == "Scan") {
         useScan(link);
+    } else if (abilityName == "Trojan") {
+        useTrojan(link);
     }
     players[playerIndex]->useAbility(abilityNumber);
     checkGameOver();
@@ -200,9 +213,18 @@ void Game::move(char link, const string &direction) {
                 }
             }
         }
-    
+    }
+    // if new cell contains a warp 
+    else if (newCell.isWarp()) {
+        int warpToRow = newCell.getWarpRow();
+        int warpToCol = newCell.getWarpCol();
+        Cell &warpCell = board->getCell(warpToRow, warpToCol);
+        warpCell.setContent(currLink->getId());
+        warpCell.setWarp(false);
+        newCell.setWarp(false);
+    }
     // moving into a cell contain an opponents link
-    } else if (!(newCell.isEmpty())) {
+    else if (!(newCell.isEmpty())) {
         char content = newCell.getContent();
         int opponentIndex = 0;
         for (int i = 0; i < playerCount; ++i) {
@@ -254,6 +276,20 @@ void Game::useFirewall(int row, int col) {
     cell.setFirewall(currentTurn, true);
 }
 
+void Game::useWarp(int r1, int c1, int r2, int c2) {
+    Cell &cell1 = board->getCell(r1, c1);
+    Cell &cell2 = board->getCell(r2, c2);
+    
+    if (cell1.isServerPort() || cell2.isServerPort()) throw runtime_error(Err::cannotUseAbilityonOtherAbility("Warp", "Server Port"));
+    if (cell1.hasFirewall() || cell2.hasFirewall()) throw runtime_error(Err::cannotUseAbilityonOtherAbility("Warp", "Firewall"));
+    if (!(cell1.isEmpty() && cell2.isEmpty())) throw runtime_error(Err::cannotUseAbilityonOtherAbility("Warp", "Link"));
+    if (cell1.isWarp() || cell2.isWarp()) throw runtime_error(Err::cannotUseAbilityonOtherAbility("Warp", "Warp"));
+
+    cell1.setWarp(true);
+    cell1.setWarpCords(r2, c2);
+    cell2.setWarp(true);
+    cell2.setWarpCords(r1, c1);
+}
 
 void Game::useScan(char l) {
     // if player tries to scan their own link, return error
@@ -309,6 +345,21 @@ void Game::usePolarise(char link) {
     // check if already downloaded, then no point polarising
     if (currLink->getIsDownloaded()) throw runtime_error(Err::isAlreadyDownloaded);
     currLink->polarise();
+}
+
+void Game::useTrojan(char link) {
+    // can't use Trojan on opponent(s) links
+    if (!(validPiLink(link, currentTurn))) throw runtime_error(Err::cannotUseAbilityOnOtherLink("LinkBoost"));
+    // get the link to trojan
+    shared_ptr<Link> currLink;
+    for (int i = 0; i < playerCount; ++i) {
+        if (validPiLink(link, i + 1)) currLink = players[i]->getLink(link, i + 1);
+    }
+
+    // you can't apply trojan to a downloaded link
+    if (currLink->getIsDownloaded()) throw runtime_error(Err::isAlreadyDownloaded);
+    // the function below checks if the link is already a trojan
+    currLink->trojan();
 }
 
 void Game::useLinkBoost(char link) {

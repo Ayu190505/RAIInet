@@ -44,6 +44,10 @@ void Controller::run() const {
                     int row, col;
                     if (!(*in >> row >> col)) throw runtime_error(Err::expectedCoordinatesForFireWall);
                     game->useAbility(abilityIndex, row, col);
+                } else if (abilityName == "Warp") {
+                    int r1, c1, r2, c2;
+                    if (!(*in >> r1 >> c1 >> r2 >> c2)) throw runtime_error(Err::expectedCoordinatesForFireWall);
+                    game->useAbility(abilityIndex, r1, c1, r2, c2);
                 } else {
                     char c;
                     if (!(*in >> c)) throw runtime_error(Err::expectedLinkIdentity);

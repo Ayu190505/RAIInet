@@ -4,7 +4,7 @@
 #include "Err.h"
 
 Link::Link(char id, LinkType t, int strength, int row, int col) : 
-    id{id}, t{t}, strength{strength}, row{row}, col{col}, stepSize{1}, isVisible{false}, isDownloaded{false} {}
+    id{id}, t{t}, strength{strength}, row{row}, col{col}, stepSize{1}, isVisible{false}, isDownloaded{false}, isTrojan{false} {}
 
 char Link::getId() const {
     return id;
@@ -36,6 +36,10 @@ bool Link::getIsDownloaded() const {
 
 int Link::getStepSize() const {
     return stepSize;
+}
+
+bool Link::getIsTrojan() const {
+    return isTrojan;
 }
 
 void Link::setRow(int r) {
@@ -72,5 +76,10 @@ void Link::download() {
     if (isDownloaded) throw runtime_error(Err::isAlreadyDownloaded);
     isDownloaded = true;
     isVisible = true;
+}
+
+void Link::trojan() {
+    if (isTrojan) throw runtime_error(Err::isAlreadyTrojan);
+    isTrojan = true;
 }
     

@@ -4,7 +4,7 @@
 
 class Ability {
     int id;
-    enum class Abilities {LinkBoost = 'L', Firewall = 'F', Download = 'D', Polarize = 'P', Scan = 'S', Teleport = 'T', Imprison = 'I', Undecided = 'U'};
+    enum class Abilities {LinkBoost = 'L', Firewall = 'F', Download = 'D', Polarize = 'P', Scan = 'S', Trojan = 'T', Imprison = 'I', Warp = 'W'};
     Abilities ability;
     bool isActivated;
     public:

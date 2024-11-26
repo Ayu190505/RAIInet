@@ -23,10 +23,10 @@ int main(int argc, const char* argv[]){
     // Argument checking here
     int numPlayers = 2;
     bool multipleDisplay = false;
-    string validAbilities = "LFDSP";
+    string validAbilities = "LFDSPTW";
     vector<string> playerAbilities(maxPlayers, "LFDSP"); // index + 1 represents player number
     vector<string> playerLinkOrders(maxPlayers); // same here
-    for (int i = 0; i < maxPlayers; ++i) {
+    for (int i = 0; i < numPlayers; ++i) {
         playerLinkOrders[i] = randomLinkGenerator();
     }
     bool graphicsEnabled = false;
@@ -95,7 +95,9 @@ int main(int argc, const char* argv[]){
                                     '----------------'  '----------------'  '----------------'  '----------------'  '----------------'  '----------------'  '----------------'   
 
     )" << endl;
-
+    for (const std::string& ability : playerAbilities) {
+        std::cout << ability << std::endl;
+    }
     // start of game loop within controller class
     shared_ptr<Game> game = make_shared<Game>(numPlayers, playerLinkOrders, playerAbilities, graphicsEnabled);
     Controller controller{game, numPlayers, graphicsEnabled, multipleDisplay};

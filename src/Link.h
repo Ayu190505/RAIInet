@@ -8,7 +8,7 @@ class Link {
     char id;
     LinkType t;
     int strength, row, col, stepSize;
-    bool isVisible, isDownloaded;
+    bool isVisible, isDownloaded, isTrojan;
     public:
     Link(char id, LinkType t, int strength, int row, int col);
 
@@ -21,6 +21,7 @@ class Link {
     bool getIsVisible() const;
     bool getIsDownloaded() const;
     int getStepSize() const;
+    bool getIsTrojan() const;
 
     // setters
     void setRow(int r);
@@ -32,6 +33,7 @@ class Link {
     void polarise();
     void scan();
     void download();
+    void trojan();
 };
 
 

@@ -57,6 +57,14 @@ int Cell::getCol() const {
     return col;
 }
 
+int Cell::getWarpRow() const {
+    return warpRow;
+}
+
+int Cell::getWarpCol() const {
+    return warpCol;
+}
+
 char Cell::getContent() const {
     return c;
 }
@@ -71,14 +79,6 @@ bool Cell::hasOwnFirewall(int playerNumber) const {
 
 bool Cell::hasOpponnentFirewall(int playerNumber) const {
     return hasFirewall() && whichPlayersFirewall != playerNumber;
-}
-
-void Cell::setFirewall(int playerNumber, bool status) {
-    if (status == false) {
-        whichPlayersFirewall = 0;
-    } else {
-        whichPlayersFirewall = playerNumber;
-    }
 }
 
 bool Cell::isServerPort() const {
@@ -109,6 +109,27 @@ bool Cell::isLocked() const {
     return locked;
 }
 
+bool Cell::isWarp() const {
+    return warpActive;
+}
+
 void Cell::setContent(char content) {
     c = content;
+}
+
+void Cell::setFirewall(int playerNumber, bool status) {
+    if (status == false) {
+        whichPlayersFirewall = 0;
+    } else {
+        whichPlayersFirewall = playerNumber;
+    }
+}
+
+void Cell::setWarpCords(int row, int column) {
+    warpRow = row;
+    warpCol = col;
+}
+
+void Cell::setWarp(bool what) {
+    warpActive = what;
 }

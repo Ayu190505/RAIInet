@@ -91,10 +91,11 @@ void Player::useAbility(int abilityNumber) {
 }
 
 void Player::download(shared_ptr<Link> &l) {
+    int increment = l->getIsTrojan() ? 2 : 1;
     if (l->getType() == LinkType::Data) {
-        ++numOfDataDownloaded;
+        numOfDataDownloaded += increment;
     } else {
-        ++numOfVirusDownloaded;
+        numOfVirusDownloaded += increment;
     }
 }
 
