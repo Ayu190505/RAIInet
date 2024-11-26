@@ -20,3 +20,5 @@ void Subject::notifyObservers() {
         o->notify();
     }
 }
+
+Subject::~Subject() {}

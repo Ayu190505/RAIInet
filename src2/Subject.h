@@ -12,6 +12,7 @@ class Subject {
     void attach(const std::shared_ptr<Observer> &o);
     void detach(const std::shared_ptr<Observer> &o);
     void notifyObservers();
+    virtual ~Subject() = 0;
 };
 
 #endif
