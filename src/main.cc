@@ -24,35 +24,29 @@ int main(int argc, const char* argv[]){
     int numPlayers = 2;
     bool multipleDisplay = false;
     string validAbilities = "LFDSP";
-    vector<string> playerAbilities(numPlayers, "LFDSP"); // index + 1 represents player number
-    vector<string> playerLinkOrders(numPlayers); // same here
-    for (int i = 0; i < numPlayers; ++i) {
+    vector<string> playerAbilities(maxPlayers, "LFDSP"); // index + 1 represents player number
+    vector<string> playerLinkOrders(maxPlayers); // same here
+    for (int i = 0; i < maxPlayers; ++i) {
         playerLinkOrders[i] = randomLinkGenerator();
     }
     bool graphicsEnabled = false;
     try { 
         for (int i = 1; i < argc; ++i) {
             string arg = argv[i];
-            if (arg == "-ability1") {
+            if (arg == "-ability1" || arg == "-ability2" || arg == "-ability3" || arg == "-ability4") {
+                if ((arg == "-ability3" || arg == "-ability4") && numPlayers != maxPlayers) throw invalid_argument(Err::invalidPlayerNumber);
+                int abilityIndex = arg.back() - '0' - 1;
                 ++i;
                 if (i >= argc) throw out_of_range(Err::insufficientArgs);
-                playerAbilities[0] = string(argv[i]);
-                areAbilitiesValid(playerAbilities[0], validAbilities);
-            } else if (arg == "-ability2") {
-                ++i;
-                if (i >= argc) throw out_of_range(Err::insufficientArgs);
-                playerAbilities[1] = string(argv[i]);
-                areAbilitiesValid(playerAbilities[1], validAbilities);                
-            } else if (arg == "-link1") {
-                ++i;
-                if (i >= argc) throw out_of_range(Err::insufficientArgs);
-                ifstream file{argv[i]};
-                playerLinkOrders[0] = retrieveLink(file);
-            } else if (arg == "-link2") {
+                playerAbilities[abilityIndex] = string(argv[i]);
+                areAbilitiesValid(playerAbilities[abilityIndex], validAbilities);
+            } else if (arg == "-link1" || arg == "-link2" || arg == "-link3" || arg == "-link4") {
+                if ((arg == "-link3" || arg == "-link4") && numPlayers != maxPlayers) throw invalid_argument(Err::invalidPlayerNumber);
+                int linkIndex = arg.back() - '0' - 1;
                 ++i;
                 if (i >= argc) throw out_of_range(Err::insufficientArgs);
                 ifstream file{argv[i]};
-                playerLinkOrders[1] = retrieveLink(file);
+                playerLinkOrders[linkIndex] = retrieveLink(file);
             } else if (arg == "graphics") {
                 graphicsEnabled = true;
             } else if (arg == "multipleDisplay") {
@@ -68,6 +62,8 @@ int main(int argc, const char* argv[]){
         return 1;
     }
 
+    playerLinkOrders.resize(numPlayers);
+    playerAbilities.resize(numPlayers);
     // Start of game loop within controller class
     shared_ptr<Game> game = make_shared<Game>(numPlayers, playerLinkOrders, playerAbilities, graphicsEnabled);
     Controller controller{game, numPlayers, graphicsEnabled, multipleDisplay};

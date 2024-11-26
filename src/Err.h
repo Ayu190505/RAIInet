@@ -11,6 +11,7 @@ class Err {
     static string invalidArg;
     static string invalidCommandLineArg;
     static string invalidRuntimeCommand;
+    static string invalidPlayerNumber;
     static string invalidAbilities;
     static string invalidAbility;
     static string invalidAbilityIndex;

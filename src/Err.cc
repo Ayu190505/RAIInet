@@ -6,13 +6,14 @@
 string Err::insufficientArgs = "Insufficent arguments provided!";
 string Err::invalidArg = "Invalid arguments provided!";
 string Err::invalidCommandLineArg = 
-    "Arguments must be of one of the forms: [-ability1 <abilities>] [-ability2 <abilities>] [-link1 <placementFile>] [-link2 <placementFile] [graphics] [multipleDisplay] [player-four]. Invalid argument is: ";
+    "Arguments must be of one of the forms: [-ability<index> <abilities>] [-link<index> <placementFile>] [graphics] [multipleDisplay] [player-four]. Invalid argument is: ";
 string Err::invalidRuntimeCommand = 
 "Invalid rumtime command provided\n Commands must be of one of the forms: [move <linkID> <dir>] [abilities] [ability <N>] [sequence <sequenceFile>] [board] [quit]";
 string Err::invalidFile = "File not found: ";
 string Err::expectedLinkAndDir = "Expected a link ID and direction to move";
 string Err::invalidDirection = "Invalid direction provided. Directions may only be of the type [up] [down] [left] [right]";
 string Err::reenterCommand = "Re-enter your command";
+string Err::invalidPlayerNumber = "Cannot have players 3 or 4 for a two player game! Change player number to 4 by specifying [player-four] first!";
 
 // Ability Errors
 string Err::invalidAbilities = "Abilities can only be of the form [L] [F] [D] [S] [P], and you may have a total of 5 and a maximum of 2 of each ability";
