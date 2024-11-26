@@ -282,6 +282,7 @@ void Game::useWarp(int r1, int c1, int r2, int c2) {
     Cell &cell1 = board->getCell(r1, c1);
     Cell &cell2 = board->getCell(r2, c2);
     
+    // maybe wanna move this into the cell setwarp function?
     if (cell1.isServerPort() || cell2.isServerPort()) throw runtime_error(Err::cannotUseAbilityonOtherAbility("Warp", "Server Port"));
     if (cell1.hasFirewall() || cell2.hasFirewall()) throw runtime_error(Err::cannotUseAbilityonOtherAbility("Warp", "Firewall"));
     if (!(cell1.isEmpty() && cell2.isEmpty())) throw runtime_error(Err::cannotUseAbilityonOtherAbility("Warp", "Link"));
