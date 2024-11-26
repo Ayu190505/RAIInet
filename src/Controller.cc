@@ -13,6 +13,10 @@ void Controller::run() const {
     bool abilityUsedThisTurn = false;
     istream *in = &cin; // using pointer to make input simple
     while (true) {
+        if (game->getIsGameOver()) {
+            //game->displayGameOver();
+            break;
+        }
         if (!(*in >> command)) {
             if (in == &sequenceFile) {
                 sequenceFile.close();

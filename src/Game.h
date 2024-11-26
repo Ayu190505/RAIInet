@@ -46,6 +46,7 @@ class Game : public Subject {
     shared_ptr<Board> getBoard() const;
     int getCurrentTurn() const;
     int getPlayerCount() const;
+    bool getIsGameOver() const;
 };
 
 

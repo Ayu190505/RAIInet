@@ -220,6 +220,7 @@ void Game::move(char link, const string &direction) {
         int warpToCol = newCell.getWarpCol();
         Cell &warpCell = board->getCell(warpToRow, warpToCol);
         warpCell.setContent(currLink->getId());
+        cout << warpToCol << ',' << warpToCol << endl;
         currLink->setRow(warpToRow);
         currLink->setCol(warpToCol);
         warpCell.setWarp(false);
@@ -545,6 +546,10 @@ bool Game::isActive(int playeri) const {
 }
 bool in(int x, int l, int u) {
     return (x >= l) && (x <= u);
+}
+
+bool Game::getIsGameOver() const {
+    return gameOver;
 }
 
 bool validPiLink(char link, int p) {

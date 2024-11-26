@@ -125,9 +125,9 @@ void Cell::setFirewall(int playerNumber, bool status) {
     }
 }
 
-void Cell::setWarpCords(int row, int column) {
-    warpRow = row;
-    warpCol = col;
+void Cell::setWarpCords(int p1, int p2) {
+    warpRow = p1;
+    warpCol = p2;
 }
 
 void Cell::setWarp(bool what) {
