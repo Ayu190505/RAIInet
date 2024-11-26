@@ -22,6 +22,7 @@ const char p2BaseChar = 'A';
 const char p3BaseChar = 'i';
 const char p4BaseChar = 'I';
 const char serverPort = 'S';
+const char warpChar = '*';
 const int abilitiesLen = 5;
 
 const int center = 23;
@@ -123,6 +124,8 @@ void TextObserver::notify() {
             } else if (cell.isServerPort()) {
                 if (game->getPlayer(cell.getPlayersServerPort())->getEliminated()) out << '.';
                 else out << setw(0) << serverPort;
+            } else if (cell.isWarp()) {
+                out << setw(0) << warpChar;
             } else if (!cell.isEmpty()) {
                 out << setw(0) << cell.getContent();
             } else if (cell.hasOwnFirewall(player1)){
