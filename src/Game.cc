@@ -450,6 +450,7 @@ void Game::checkGameOver() {
         if (players[i]->getVirusDownloaded() >= gameOverCondition) {
             
             if (playerCount > 2) {
+                if (players[i]->getEliminated()) continue;
                 players[i]->setEliminated(true);
                 for (int j = 0; j < board->getSize(); ++j) {
                     for (int k = 0; k < board->getSize(); ++k) {
