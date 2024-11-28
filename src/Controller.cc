@@ -77,10 +77,14 @@ void Controller::run() const {
                 throw runtime_error(Err::invalidRuntimeCommand);
             }
         } catch(const exception &e) {
+            // don't we do this in any case???
             if (in->fail()) {
                 in->clear();
                 in->ignore();
             }
+            
+            in->clear();
+            in->ignore(1000, '\n');           
             game->displayErr(e.what(), multipleDisplay);
             continue;
         }
