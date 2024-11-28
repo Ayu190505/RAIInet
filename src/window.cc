@@ -6,6 +6,8 @@
 #include <unistd.h>
 #include "window.h"
 
+using namespace std;
+
 Xwindow::Xwindow(int width, int height) : width(width), height(height) {
     d = XOpenDisplay(NULL);
     if (d == NULL) {
@@ -79,13 +81,13 @@ void Xwindow::drawRectangle(int x, int y, int width, int height, int colour) {
     XSetForeground(d, gc, colours[Black]);
 }
 
-void Xwindow::drawString(int x, int y, std::string msg, int colour) {
+void Xwindow::drawString(int x, int y, string msg, int colour) {
     XSetForeground(d, gc, colours[colour]);
     XDrawString(d, w, gc, x, y, msg.c_str(), msg.length());
     XSetForeground(d, gc, colours[Black]);
 }
 
-void Xwindow::loadFont(std::string fontName) {
+void Xwindow::loadFont(string fontName) {
     if(fonts.find(fontName) == fonts.end()) {
         XFontStruct *font_info = XLoadQueryFont(d, fontName.c_str());
         if(!font_info) {
@@ -104,7 +106,7 @@ void Xwindow::loadFont(std::string fontName) {
     }
 }
 
-void Xwindow::drawStringFont(int x, int y, std::string msg, std::string fontName, int colour) {
+void Xwindow::drawStringFont(int x, int y, string msg, string fontName, int colour) {
     if(fontGCs.find(fontName) == fontGCs.end()) {
         loadFont(fontName);
     }

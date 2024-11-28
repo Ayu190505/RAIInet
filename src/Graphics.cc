@@ -56,7 +56,7 @@ Graphics::Graphics(weak_ptr<Game> &g, int playerNumber, bool multipleDisplay) :
     auto currPlayer = game->getPlayer(playerNumber);
     auto opp = game->getPlayer((playerNumber % 2) + 1);
     int desiredPixelSize = 50;
-    string fontName = "-*-helvetica-bold-r-normal--" + std::to_string(desiredPixelSize) + "-*-*-*-*-*-*-*";
+    string fontName = "-*-helvetica-bold-r-normal--" + to_string(desiredPixelSize) + "-*-*-*-*-*-*-*";
     // area around Raiinet
     w.fillRectangle(0, 0, 10, 70, nameColour);
     w.fillRectangle(windowWidth - 10, 0, 10, 70, nameColour);
@@ -79,7 +79,7 @@ Graphics::Graphics(weak_ptr<Game> &g, int playerNumber, bool multipleDisplay) :
     for (int i = 0; i < numKeys; ++i) {
         int keyX = i * keyWidth;
         // Draw the label
-        std::string label = colorKeys[i].label + ":";
+        string label = colorKeys[i].label + ":";
         int labelX = keyX + 10;
         int labelY = keyY + 30;
         w.drawString(labelX, labelY, label, Xwindow::Black);
@@ -134,7 +134,7 @@ void Graphics::notify() {
     if (!multipleDisplay) {
         currPlayerNumber = game->getCurrentTurn();
         int desiredPixelSize = 50;
-        string fontName = "-*-helvetica-bold-r-normal--" + std::to_string(desiredPixelSize) + "-*-*-*-*-*-*-*";
+        string fontName = "-*-helvetica-bold-r-normal--" + to_string(desiredPixelSize) + "-*-*-*-*-*-*-*";
         w.fillRectangle(90, 20, windowWidth - 150, 40, Xwindow::White);
         w.drawStringFont(100, 60, "RAIINET: P" + to_string(currPlayerNumber), fontName, nameColour);
     }
@@ -362,7 +362,7 @@ void Graphics::displayGameOver() {
     auto game = g.lock();
     w.fillRectangle(0, 0, windowWidth, windowWidth, Xwindow::White);
     int desiredPixelSize = 50;
-    string fontName = "-*-helvetica-bold-r-normal--" + std::to_string(desiredPixelSize) + "-*-*-*-*-*-*-*";
+    string fontName = "-*-helvetica-bold-r-normal--" + to_string(desiredPixelSize) + "-*-*-*-*-*-*-*";
     string toDisplay = "Player " + to_string(game->getPlayerWon()) + " Wins!";
     w.drawStringFont(100, 300, toDisplay, fontName);
     chrono::milliseconds timespan(5000);
