@@ -38,7 +38,9 @@ int main(int argc, const char* argv[]){
                 int abilityIndex = arg.back() - '0' - 1;
                 ++i;
                 if (i >= argc) throw out_of_range(Err::insufficientArgs);
-                playerAbilities[abilityIndex] = string(argv[i]); // to upper
+                string ability = argv[i];
+                transform(ability.begin(), ability.end(), ability.begin(), ::toupper);
+                playerAbilities[abilityIndex] = ability;
                 areAbilitiesValid(playerAbilities[abilityIndex], validAbilities);
             } else if (arg == "-link1" || arg == "-link2" || arg == "-link3" || arg == "-link4") {
                 if ((arg == "-link3" || arg == "-link4") && numPlayers != maxPlayers) throw invalid_argument(Err::invalidPlayerNumber);
