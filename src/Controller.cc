@@ -1,4 +1,5 @@
 #include "Controller.h"
+#include <limits>
 
 void setUpObservers(const shared_ptr<Game> game, vector<shared_ptr<Observer>> &observers, int numPlayers, bool graphicsEnabled, bool multipleDisplay);
 
@@ -78,7 +79,7 @@ void Controller::run() const {
             }
         } catch(const exception &e) {
             in->clear();
-            in->ignore(1000, '\n');           
+            in->ignore(std::numeric_limits<int>::max(), '\n');           
             game->displayErr(e.what(), multipleDisplay);
             continue;
         }
