@@ -40,6 +40,7 @@ TextObserver::TextObserver(weak_ptr<Game> &g, ostream &out, ostream &err, int pl
 
 void TextObserver::notify() {
     shared_ptr<Game> game = g.lock();
+    if (game->getPlayer(playerNumber)->getEliminated()) return;
     auto board = game->getBoard();
     int size = board->getSize();
     vector<int> turns_4{1, 4, 2, 3};
