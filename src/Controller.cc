@@ -53,20 +53,19 @@ void Controller::run() const {
 
                 // what we expect the type of param for the function to take
                 std::vector<std::string> expectedParams = Ability::getExpectedParams(abilityName);
+                int paramNum = 1; // to track which specific param was invalid
                 for (const auto &parameterType : expectedParams) {
                     if (parameterType == "int") {
                         int input;
-                        if (!(*in >> input)) {
-                            if (abilityName == "Firewall") throw runtime_error(Err::expectedCoordinatesForFireWall);
-                            else if (abilityName == "Warp") throw runtime_error(Err::expectedCoordinatesForWarp); 
-                        }
+                        if (!(*in >> input)) throw runtime_error(Err::abilityExpectsInputOf(abilityName, paramNum, "an integer"));
                         params.push_back(input);
                     }
                     else if (parameterType == "char") {
                         char link;
-                        if (!(*in >> link)) throw runtime_error(Err::expectedLinkIdentity);
+                        if (!(*in >> link)) throw runtime_error(Err::abilityExpectsInputOf(abilityName, paramNum, "a char"));
                         params.push_back(link);
                     }
+                    paramNum += 1;
                 }
 
                 game->useAbility(abilityIndex, abilityName, params);

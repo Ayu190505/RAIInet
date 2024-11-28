@@ -1,6 +1,7 @@
 #ifndef ABILITY_H
 #define ABILITY_H
 #include <string>
+#include <vector>
 
 class Ability {
     int id;

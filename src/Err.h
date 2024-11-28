@@ -45,6 +45,7 @@ class Err {
     static string cannotUseAbilityonOtherAbility(const string &ability, const string &otherAbility);
     static std::string invalidAbilities();
     static std::string invalidAbility();
+    static std::string abilityExpectsInputOf(const string &ability, const int paramNum, const string &input);
 };
 
 #endif
