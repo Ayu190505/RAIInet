@@ -216,15 +216,17 @@ int getPlayerIndex(int player, vector<int> turns) {
 int mod(int x, int y) {return (x < 0) ? y -(-x % y) : x % y;} 
 
 int getCellPlayer(char link) {
-    if (link >= 'a' && link <= 'z') return 1;
-    else if (link >= 'A' && link <= 'Z') return 2;
-    else if (link >= 'n' && link <= 'u') return 3;
-    else if (link >= 'N' && link <= 'U') return 4;
+    if (link >= 'a' && link <= 'h') return 1;
+    else if (link >= 'A' && link <= 'H') return 2;
+    else if (link >= 'i' && link <= 'p') return 3;
+    else if (link >= 'I' && link <= 'P') return 4;
     else return 0;
 }
 
 void TextObserver::player_line_1(int num) {
+    shared_ptr<Game> game = g.lock();
     string s = "Player " + to_string(num) + ":";
+    if (game->getPlayer(num)->getEliminated()) s += " (X_X)";
     out << std::left << setw(center) << s;
 }
 void TextObserver::player_line_2(int data, int virus) {
@@ -242,7 +244,7 @@ void TextObserver::player_line_4_5(const shared_ptr<Player>& player, int i, int 
         char toPrint = pnBaseChar(n) + i * numberOfLinksPerLine + j;
         shared_ptr<Link> currLink = player->getLink(toPrint, n);
         string type = "?";
-        if ((n == game->getCurrentTurn()) || (currLink->getIsVisible())) {
+        if ((n == game->getCurrentTurn()) || (currLink->getIsVisible()) || game->getPlayer(n)->getEliminated()) {
             type = (currLink->getType() == LinkType::Data) ? "D" : "V";
             type += to_string(currLink->getStrength());
         } 
