@@ -104,6 +104,12 @@ Graphics::Graphics(weak_ptr<Game> &g, int playerNumber, bool multipleDisplay) :
     gridWidth = cellSize * size;
     gridHeight = cellSize * size;
 
+    /*----- -----
+    P1   | P2
+    ----- -----
+    ----- -----
+    P3   | P4
+    ----- -----*/
     // Center the grid horizontally
     int gridLeft = (windowWidth - gridWidth) / 2;
 
@@ -134,7 +140,7 @@ void Graphics::notify() {
     }
     auto board = game->getBoard();
     auto currPlayer = game->getPlayer(currPlayerNumber);
-    auto opp = game->getPlayer((currPlayerNumber % 2) + 1);
+    auto opp = game->getPlayer((currPlayerNumber % 2) + 1); // CHANGE
     // draw player boxes
     w.fillRectangle(40, 95, 182, 90, Xwindow::White);
     w.fillRectangle(270, 95, 182, 90, Xwindow::White);

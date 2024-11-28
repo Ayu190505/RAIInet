@@ -23,8 +23,8 @@ class Xwindow {
   int getWidth() const;
   int getHeight() const;
 
-  // Draws a rectangle
-  void fillRectangle(int x, int y, int width, int height, int colour=Black);
+    // Draws a rectangle
+    void fillRectangle(int x, int y, int width, int height, int colour=Black);
 
     void drawRectangle(int x, int y, int width, int height, int colour=Black);
 
@@ -34,8 +34,13 @@ class Xwindow {
     // Draws a string using specified font
     void drawStringFont(int x, int y, std::string msg, std::string fontName, int colour=Black);
     void drawLine(int x1, int y1, int x2, int y2, int colour=Black);
+    
     // Loads a font
     void loadFont(std::string fontName);
+    
+    // Draws a Circle
+	  void fillCircle (int x, int y, int r, int colour);
+	  void drawCircle (int x, int y, int r, int colour);
 };
 
 #endif
