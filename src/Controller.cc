@@ -1,5 +1,6 @@
 #include "Controller.h"
 #include <limits>
+#include <any>
 
 void setUpObservers(const shared_ptr<Game> game, vector<shared_ptr<Observer>> &observers, int numPlayers, bool graphicsEnabled, bool multipleDisplay);
 
@@ -45,23 +46,29 @@ void Controller::run() const {
                 int abilityIndex = 0;
                 if (!(*in >> abilityIndex)) throw runtime_error(Err::invalidAbilityIndex);
                 string abilityName = game->getAbilityName(abilityIndex);
-                if (abilityName == "Firewall") {
+                std::vector<std::any> params;
+
+                if (abilityName == "Firewall" || abilityName == "Imprison") {
                     int row, col;
                     if (!(*in >> row >> col)) throw runtime_error(Err::expectedCoordinatesForFireWall);
-                    game->useAbility(abilityIndex, row, col, abilityName);
-                } else if(abilityName == "Imprison") {
-                    int r,c;
-                    if (!(*in >> r >> c)) throw runtime_error(Err::expectedCoordinatesForFireWall);
-                    game->useAbility(abilityIndex, r, c, abilityName);
+                    params.push_back(row);
+                    params.push_back(col);
+                    // game->useAbility(abilityIndex, row, col, abilityName);
                 } else if (abilityName == "Warp") {
                     int r1, c1, r2, c2;
                     if (!(*in >> r1 >> c1 >> r2 >> c2)) throw runtime_error(Err::expectedCoordinatesForFireWall);
-                    game->useAbility(abilityIndex, r1, c1, r2, c2);
+                    params.push_back(r1);
+                    params.push_back(c1);
+                    params.push_back(r2);
+                    params.push_back(c2);
+                    // game->useAbility(abilityIndex, r1, c1, r2, c2);
                 } else {
                     char c;
                     if (!(*in >> c)) throw runtime_error(Err::expectedLinkIdentity);
-                    game->useAbility(abilityIndex, abilityName, c);
+                    params.push_back(c);
+                    // game->useAbility(abilityIndex, abilityName, c);
                 }
+                game->useAbility(abilityIndex, abilityName, params);
                 abilityUsedThisTurn = true;
             } else if (command == "board") {
                 // change to just display board

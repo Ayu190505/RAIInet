@@ -3,6 +3,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <compare>
+#include <any>
 #include "Err.h"
 #include "Ability.h"
 #include "Graphics.h"
@@ -50,6 +51,49 @@ string Game::getAbilityName(int i) {
     // check ability index here
     if (i < 1 || i > maxAbilities) throw runtime_error(Err::invalidAbilityIndex);
     return players[currentTurn - 1]->getAbilityName(i);
+}
+
+void Game::useAbility(int abilityNumber, const string &abilityName, const std::vector<std::any> &params) {
+    const int size = (playerCount == 2) ? 8 : 10;
+    int playerIndex = currentTurn - 1;
+    shared_ptr<Ability> ability = players[playerIndex]->getAbility(abilityNumber);
+    if (ability->getIsActivated()) throw runtime_error(Err::abilityAlreadyUsed(ability->getAbilityName(), ability->getAbilityID()));
+
+    if (abilityName == "Firewall" || abilityName == "Imprison") {
+        int row = std::any_cast<int>(params[0]);
+        int col = std::any_cast<int>(params[1]);
+
+        if (!(row >= 0 && row < size && col >= 0 && col < size)) throw out_of_range(Err::invalidCoordinates);
+        if (board->getCell(row,col).isLocked()) throw out_of_range(Err::invalidCoordinates);
+
+        if (abilityName == "Firewall") useFirewall(row, col);
+        else if (abilityName == "Imprison") useImprison(row, col);
+    }
+    else if (abilityName == "Warp") {
+        int r1 = std::any_cast<int>(params[0]);
+        int c1 = std::any_cast<int>(params[1]);
+        int r2 = std::any_cast<int>(params[2]);
+        int c2 = std::any_cast<int>(params[3]);
+
+        if (!(r1 >= 0 && r1 < size && c1 >= 0 && c1 < size) || !(r2 >= 0 && r2 < size && c2 >= 0 && c2 < size)) throw out_of_range(Err::invalidCoordinates);
+        if ((board->getCell(r1,c1).isLocked()) || (board->getCell(r2,c2).isLocked())) throw out_of_range(Err::invalidCoordinates);
+
+        useWarp(r1, c1, r2, c2);
+    }
+    else {
+        char link = std::any_cast<char>(params[0]);
+        if (!validLink(link)) throw runtime_error(Err::invalidLink);
+
+        if (abilityName == "LinkBoost") useLinkBoost(link);
+        else if (abilityName == "Download") useDownload(link);
+        else if (abilityName == "Polarise") usePolarise(link);
+        else if (abilityName == "Scan") useScan(link);
+        else if (abilityName == "Trojan") useTrojan(link);
+    }
+
+    players[playerIndex]->useAbility(abilityNumber);
+    checkGameOver();
+    notifyObservers();
 }
 
 // update useAbility to check if already used ability before calling each function
