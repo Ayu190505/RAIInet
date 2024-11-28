@@ -61,11 +61,16 @@ void Controller::run() const {
                         params.push_back(input);
                     }
                     else if (parameterType == "char") {
-                        char link;
-                        if (!(*in >> link)) throw runtime_error(Err::abilityExpectsInputOf(abilityName, paramNum, "a char"));
-                        params.push_back(link);
+                        char input;
+                        if (!(*in >> input)) throw runtime_error(Err::abilityExpectsInputOf(abilityName, paramNum, "a char"));
+                        params.push_back(input);
                     }
-                    paramNum += 1;
+                    else if (parameterType == "string") {
+                        string input;
+                        if (!(*in >> input)) throw runtime_error(Err::abilityExpectsInputOf(abilityName, paramNum, "a string"));
+                        params.push_back(input);
+                    }
+                    ++paramNum;
                 }
 
                 game->useAbility(abilityIndex, abilityName, params);
