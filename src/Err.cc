@@ -1,6 +1,7 @@
 #include "Err.h"
 #include <string>
-
+#include "Ability.h"
+#include <sstream>
 // Argument errors here
 
 string Err::insufficientArgs = "Insufficent arguments provided!";
@@ -16,11 +17,9 @@ string Err::reenterCommand = "Re-enter your command";
 string Err::invalidPlayerNumber = "Cannot have players 3 or 4 for a two player game! Change player number to 4 by specifying [player-four] first!";
 
 // Ability Errors
-string Err::invalidAbilities = "Abilities can only be of the form [L] [F] [D] [S] [P] [T] [W] [I], and you may have a total of 5 and a maximum of 2 of each ability";
-string Err::invalidAbility = "Abilities can only be of the form [L] [F] [D] [S] [P] [T] [W] [I]";
 string Err::invalidAbilityIndex = "Expected an ability index from [1, 5]";
 string Err::expectedCoordinatesForFireWall = "Expected coordinates from firewall in the form <row> <col>";
-string Err::expectedCoordinatesForWarp = "Expected coordinates from firewall in the form <row1> <col1> <row2> <col2>";
+string Err::expectedCoordinatesForWarp = "Expected coordinates from warp in the form <row1> <col1> <row2> <col2>";
 string Err::expectedLinkIdentity = "Expected a specification for which link to use ability on";
 string Err::abilityUsedThisTurn = "You may only use one ability per turn. You must move a link before you use any more abilites.";
 string Err::isAlreadyBoosted = "This link has already been boosted!";
@@ -63,4 +62,25 @@ string Err::abilityAlreadyUsed(const string &name, int index) {
 
 string Err::cannotUseAbilityonOtherAbility(const string &ability, const string &otherAbility) {
     return "Cannot use " + ability + " on a cell with a " + otherAbility + "!";
+}
+
+// ability format helper
+std::string formatAbilities(const std::string& abilities) {
+    std::stringstream formattedAbilities;
+    for (char ability : abilities) {
+        formattedAbilities << "[" << ability << "] ";
+    }
+    std::string res = formattedAbilities.str();
+    if (!res.empty()) res.pop_back();
+    return res;
+}
+
+std::string Err::invalidAbilities() {
+    std::string validAbilities = Ability::getValidAbilities();
+    return "Abilities can only be of the form " + formatAbilities(validAbilities) + ", and you may have a total of 5 and a maximum of 2 of each ability!";
+}
+
+std::string Err::invalidAbility() {
+    std::string validAbilities = Ability::getValidAbilities();
+    return "Abilities can only be of the form " + formatAbilities(validAbilities);
 }

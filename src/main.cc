@@ -101,7 +101,7 @@ string randomLinkGenerator() {
 }
 
 void areAbilitiesValid(const string &s, const string &validAbilities) {
-    if (s.length() != abilitiesLength) throw invalid_argument(Err::invalidAbilities);
+    if (s.length() != abilitiesLength) throw invalid_argument(Err::invalidAbilities());
     unordered_map<char, int> mp;
     for (size_t i = 0; i < validAbilities.size(); ++i) {
         mp[validAbilities[i]] = 0;
@@ -111,7 +111,7 @@ void areAbilitiesValid(const string &s, const string &validAbilities) {
         if (mp.find(c) != mp.end() && mp[c] < maxOfEachAbility) {
             ++mp[c];
         } else {
-            throw invalid_argument(Err::invalidAbilities);
+            throw invalid_argument(Err::invalidAbilities());
         }
     }
 }
