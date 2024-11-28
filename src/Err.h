@@ -5,8 +5,7 @@
 
 using namespace std;
 
-class Err {
-    public:
+struct Err {
     static string insufficientArgs;
     static string invalidArg;
     static string invalidCommandLineArg;
