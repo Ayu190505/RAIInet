@@ -56,7 +56,7 @@ void Controller::run() const {
                     // game->useAbility(abilityIndex, row, col, abilityName);
                 } else if (abilityName == "Warp") {
                     int r1, c1, r2, c2;
-                    if (!(*in >> r1 >> c1 >> r2 >> c2)) throw runtime_error(Err::expectedCoordinatesForFireWall);
+                    if (!(*in >> r1 >> c1 >> r2 >> c2)) throw runtime_error(Err::expectedCoordinatesForWarp);
                     params.push_back(r1);
                     params.push_back(c1);
                     params.push_back(r2);
