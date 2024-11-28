@@ -38,6 +38,8 @@ bool validDirection(const string &direction);
 
 void getNewCords(int &row, int &col, shared_ptr<Link> &moveLink, const string &direction);
 
+void validatePreMove(char link, const string &direction, int currentTurn);
+
 
 Game::Game(int playerCount, const vector<string> &linkOrders, const vector<string> &abilities, bool graphicsEnabled) : playerCount{playerCount}, activePlayers{playerCount}, graphicsEnabled{graphicsEnabled} {
     const int size = (playerCount == 2) ? 8 : 10;
@@ -98,9 +100,7 @@ void Game::useAbility(int abilityNumber, const string &abilityName, const std::v
 
 void Game::move(char link, const string &direction) {
     // basic validations
-    if (!(validLink(link))) throw runtime_error(Err::invalidLink);
-    if (!(validDirection(direction))) throw runtime_error(Err::invalidDirection);
-    if (!(validPiLink(link, currentTurn))) throw runtime_error(Err::cannotMoveOpponentsLink);
+    validatePreMove(link, direction, currentTurn);
 
     int playerIndex = currentTurn - 1;
 
@@ -669,4 +669,10 @@ bool validP3Link(char link) {
 
 bool validP4Link(char link) {
     return (link >= 'I') && (link <= 'P');
+}
+
+void validatePreMove(char link, const string &direction, int currentTurn) {
+    if (!(validLink(link))) throw runtime_error(Err::invalidLink);
+    if (!(validDirection(direction))) throw runtime_error(Err::invalidDirection);
+    if (!(validPiLink(link, currentTurn))) throw runtime_error(Err::cannotMoveOpponentsLink);
 }
