@@ -56,7 +56,6 @@ std::string Ability::getAbilityName(){
         case Abilities::Warp: return "Warp";
     }
     return "";
-    
 }
 
 bool Ability::getIsActivated() { return isActivated; }
@@ -85,6 +84,6 @@ std::vector<std::string> Ability::getExpectedParams(const string &abilityName) {
     else {
         expectedParams = {"char"};
     }
-    
+
     return expectedParams;
 }
