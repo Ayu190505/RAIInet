@@ -19,6 +19,7 @@ class Ability {
         std::string getAbilityName(); 
         void useAbility();
         static std::string getValidAbilities();
+        static std::vector<std::string> getExpectedParams(const std::string &abilityName);
 };
 
 #endif

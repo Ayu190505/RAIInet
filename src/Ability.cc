@@ -1,5 +1,6 @@
 #include "Ability.h"
 #include <iostream>
+#include <vector>
 #include "Err.h"
 #include <string>
 
@@ -67,4 +68,23 @@ void Ability::useAbility(){
 
 std::string Ability::getValidAbilities() {
     return ValidAbilities;
+}
+
+std::vector<std::string> Ability::getExpectedParams(const string &abilityName) {
+    std::vector<std::string> expectedParams;
+
+    // abilities applied to a coordinate
+    if (abilityName == "Firewall" || abilityName == "Imprison") {
+        expectedParams = {"int", "int"};
+    }
+    // abilities applied to 2 coordinates
+    else if (abilityName == "Warp") {
+        expectedParams = {"int", "int", "int", "int"};
+    }
+    // abilities applied directly on a link
+    else {
+        expectedParams = {"char"};
+    }
+    
+    return expectedParams;
 }

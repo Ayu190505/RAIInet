@@ -1,6 +1,7 @@
 #include "Controller.h"
 #include <limits>
 #include <any>
+#include "Ability.h"
 
 void setUpObservers(const shared_ptr<Game> game, vector<shared_ptr<Observer>> &observers, int numPlayers, bool graphicsEnabled, bool multipleDisplay);
 
@@ -51,19 +52,7 @@ void Controller::run() const {
                 std::vector<std::any> params;
 
                 // what we expect the type of param for the function to take
-                std::vector<std::string> expectedParams;
-
-                if (abilityName == "Firewall" || abilityName == "Imprison") {
-                    expectedParams = {"int", "int"};
-                    // game->useAbility(abilityIndex, row, col, abilityName);
-                } else if (abilityName == "Warp") {
-                    expectedParams = {"int", "int", "int", "int"};
-                    // game->useAbility(abilityIndex, r1, c1, r2, c2);
-                } else {
-                    expectedParams = {"char"};
-                    // game->useAbility(abilityIndex, abilityName, c);
-                }
-
+                std::vector<std::string> expectedParams = Ability::getExpectedParams(abilityName);
                 for (const auto &parameterType : expectedParams) {
                     if (parameterType == "int") {
                         int input;
