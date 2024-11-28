@@ -97,56 +97,56 @@ void Game::useAbility(int abilityNumber, const string &abilityName, const std::v
 }
 
 // update useAbility to check if already used ability before calling each function
-void Game::useAbility(int abilityNumber, int row, int col, const string &abilityName) {
-    const int size = (playerCount == 2) ? 8 : 10;
-    int playerIndex = currentTurn - 1;
-    shared_ptr<Ability> ability = players[playerIndex]->getAbility(abilityNumber);
-    if (ability->getIsActivated()) throw runtime_error(Err::abilityAlreadyUsed(ability->getAbilityName(), ability->getAbilityID()));
-    if (!(row >= 0 && row < size && col >= 0 && col < size)) throw out_of_range(Err::invalidCoordinates);
-    if (board->getCell(row,col).isLocked()) throw out_of_range(Err::invalidCoordinates);
-    if (abilityName == "Firewall") {
-        useFirewall(row, col);
-    }
-    else if (abilityName == "Imprison") {
-        useImprison(row, col);
-    }
-    players[playerIndex]->useAbility(abilityNumber);
-    checkGameOver(); // is this necessary? you can't win after placing a firewall
-    notifyObservers();
-}
+// void Game::useAbility(int abilityNumber, int row, int col, const string &abilityName) {
+//     const int size = (playerCount == 2) ? 8 : 10;
+//     int playerIndex = currentTurn - 1;
+//     shared_ptr<Ability> ability = players[playerIndex]->getAbility(abilityNumber);
+//     if (ability->getIsActivated()) throw runtime_error(Err::abilityAlreadyUsed(ability->getAbilityName(), ability->getAbilityID()));
+//     if (!(row >= 0 && row < size && col >= 0 && col < size)) throw out_of_range(Err::invalidCoordinates);
+//     if (board->getCell(row,col).isLocked()) throw out_of_range(Err::invalidCoordinates);
+//     if (abilityName == "Firewall") {
+//         useFirewall(row, col);
+//     }
+//     else if (abilityName == "Imprison") {
+//         useImprison(row, col);
+//     }
+//     players[playerIndex]->useAbility(abilityNumber);
+//     checkGameOver(); // is this necessary? you can't win after placing a firewall
+//     notifyObservers();
+// }
 
-void Game::useAbility(int abilityNumber, int r1, int c1, int r2, int c2) {
-    const int size = (playerCount == 2) ? 8 : 10;
-    int playerIndex = currentTurn - 1;
-    shared_ptr<Ability> ability = players[playerIndex]->getAbility(abilityNumber);
-    if (ability->getIsActivated()) throw runtime_error(Err::abilityAlreadyUsed(ability->getAbilityName(), ability->getAbilityID()));
-    if (!(r1 >= 0 && r1 < size && c1 >= 0 && c1 < size) || !(r2 >= 0 && r2 < size && c2 >= 0 && c2 < size)) throw out_of_range(Err::invalidCoordinates);
-    if ((board->getCell(r1,c1).isLocked()) || (board->getCell(r2,c2).isLocked())) throw out_of_range(Err::invalidCoordinates);
-    useWarp(r1, c1, r2, c2);
-    players[playerIndex]->useAbility(abilityNumber);
-    notifyObservers();
-}
+// void Game::useAbility(int abilityNumber, int r1, int c1, int r2, int c2) {
+//     const int size = (playerCount == 2) ? 8 : 10;
+//     int playerIndex = currentTurn - 1;
+//     shared_ptr<Ability> ability = players[playerIndex]->getAbility(abilityNumber);
+//     if (ability->getIsActivated()) throw runtime_error(Err::abilityAlreadyUsed(ability->getAbilityName(), ability->getAbilityID()));
+//     if (!(r1 >= 0 && r1 < size && c1 >= 0 && c1 < size) || !(r2 >= 0 && r2 < size && c2 >= 0 && c2 < size)) throw out_of_range(Err::invalidCoordinates);
+//     if ((board->getCell(r1,c1).isLocked()) || (board->getCell(r2,c2).isLocked())) throw out_of_range(Err::invalidCoordinates);
+//     useWarp(r1, c1, r2, c2);
+//     players[playerIndex]->useAbility(abilityNumber);
+//     notifyObservers();
+// }
 
-void Game::useAbility(int abilityNumber, const string &abilityName, char link) {
-    int playerIndex = currentTurn - 1;
-    shared_ptr<Ability> ability = players[playerIndex]->getAbility(abilityNumber);
-    if (ability->getIsActivated()) throw runtime_error(Err::abilityAlreadyUsed(ability->getAbilityName(), ability->getAbilityID()));
-    if (!validLink(link)) throw runtime_error(Err::invalidLink);
-    if (abilityName == "LinkBoost") {
-        useLinkBoost(link);
-    } else if (abilityName == "Download") {
-        useDownload(link);
-    } else if (abilityName == "Polarise") {
-        usePolarise(link);
-    } else if (abilityName == "Scan") {
-        useScan(link);
-    } else if (abilityName == "Trojan") {
-        useTrojan(link);
-    }
-    players[playerIndex]->useAbility(abilityNumber);
-    checkGameOver();
-    notifyObservers();
-}
+// void Game::useAbility(int abilityNumber, const string &abilityName, char link) {
+//     int playerIndex = currentTurn - 1;
+//     shared_ptr<Ability> ability = players[playerIndex]->getAbility(abilityNumber);
+//     if (ability->getIsActivated()) throw runtime_error(Err::abilityAlreadyUsed(ability->getAbilityName(), ability->getAbilityID()));
+//     if (!validLink(link)) throw runtime_error(Err::invalidLink);
+//     if (abilityName == "LinkBoost") {
+//         useLinkBoost(link);
+//     } else if (abilityName == "Download") {
+//         useDownload(link);
+//     } else if (abilityName == "Polarise") {
+//         usePolarise(link);
+//     } else if (abilityName == "Scan") {
+//         useScan(link);
+//     } else if (abilityName == "Trojan") {
+//         useTrojan(link);
+//     }
+//     players[playerIndex]->useAbility(abilityNumber);
+//     checkGameOver();
+//     notifyObservers();
+// }
 
 void Game::move(char link, const string &direction) {
     // basic validations
