@@ -25,10 +25,8 @@ class Game : public Subject {
     bool graphicsEnabled;
     public:
     Game(int playerCount, const vector<string> &linkOrders, const vector<string> &abilities, bool graphicsEnabled);
-    void move(char link, const string &direction);
-    void displayAbilities(bool multipleDisplay) const;
-    void displayErr(const string &err, bool multipleDisplay) const;
-    string getAbilityName(int index);
+
+    // abilities
     void useAbility(int abilityNumber, int row, int col, const string &abilityName);
     void useAbility(int abilityNumber, int r1, int c1, int r2, int c2);
     void useAbility(int abilityNumber, const string &abilityName, char link);
@@ -40,17 +38,27 @@ class Game : public Subject {
     void useTrojan(char link);
     void useWarp(int r1, int c1, int r2, int c2);
     void useImprison(int row, int col);
-    void battle(shared_ptr<Link> currLink, shared_ptr<Link> opponentLink, int opponentIndex, Cell &cell);
-    void checkGameOver();
-    void displayGameOver();
-    bool validOutOfBounds(int row, int col) const;
-    bool isActive(int playeri) const;
-    const shared_ptr<Player>& getPlayer(int playerNumber) const;
-    shared_ptr<Board> getBoard() const;
+    void displayAbilities(bool multipleDisplay) const;
+    string getAbilityName(int index);
+
+    // getters
     int getCurrentTurn() const;
     int getPlayerCount() const;
     bool getIsGameOver() const;
     int getPlayerWon() const;
+    shared_ptr<Board> getBoard() const;
+    const shared_ptr<Player>& getPlayer(int playerNumber) const;
+
+    // helpers
+    void battle(shared_ptr<Link> currLink, shared_ptr<Link> opponentLink, int opponentIndex, Cell &cell);
+    bool validOutOfBounds(int row, int col) const;
+    bool isActive(int playeri) const;
+
+    // other
+    void move(char link, const string &direction);
+    void displayErr(const string &err, bool multipleDisplay) const;
+    void checkGameOver();
+    void displayGameOver();
 };
 
 

@@ -10,9 +10,13 @@ class Ability {
     public:
         Ability(char code, int id);
         ~Ability();
-        int getAbilityID();
-        std::string getAbilityName(); 
+
+        // getters
         bool getIsActivated();
+        int getAbilityID();
+
+        // other
+        std::string getAbilityName(); 
         void useAbility();
 };
 

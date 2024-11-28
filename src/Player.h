@@ -19,18 +19,24 @@ class Player {
     bool eliminated = false;
     public:
     Player(const string &links, int size, const string &abilities, int id);
+
+    // getters
     string getAbilityName(int i);
-    void useAbility(int abilityNumber);
-    void download(shared_ptr<Link> &l);
     int getDataDownloaded() const;
     int getVirusDownloaded() const;
-    void setDataDownloaded(int i);
-    void setVirusDownloaded(int i);
-    int getRemainingAbilities() const;
-    bool getEliminated() const;
-    void setEliminated(bool b);
     shared_ptr<Ability> getAbility(int i);
     shared_ptr<Link> getLink(char c, int playerNumber);
+    int getRemainingAbilities() const;
+    bool getEliminated() const;
+
+    // setters
+    void setDataDownloaded(int i);
+    void setVirusDownloaded(int i);
+    void setEliminated(bool b);
+
+    // other
+    void useAbility(int abilityNumber);
+    void download(shared_ptr<Link> &l);
 };
 
 #endif

@@ -10,8 +10,12 @@ private:
     int size;
 public:
     Board(int numRow);
-    Cell& getCell(int row, int col);
+
+    // getter
     int getSize() const;
+
+    // other
+    Cell& getCell(int row, int col);
 };
 
 #endif

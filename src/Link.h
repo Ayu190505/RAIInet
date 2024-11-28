@@ -29,6 +29,7 @@ class Link {
     void setStrength(int s);
     void setIsVisible(bool isVisible);
 
+    // other
     void linkBoost();
     void polarise();
     void scan();
