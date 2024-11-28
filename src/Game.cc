@@ -11,7 +11,6 @@
 using namespace std;
 
 const int maxAbilities = 5;
-const int numCol = 8;
 
 const int player1 = 1;
 const int player2 = 2;
@@ -40,10 +39,10 @@ void getNewCords(int &row, int &col, shared_ptr<Link> &moveLink, const string &d
 
 
 Game::Game(int playerCount, const vector<string> &linkOrders, const vector<string> &abilities, bool graphicsEnabled) : playerCount{playerCount}, activePlayers{playerCount}, graphicsEnabled{graphicsEnabled} {
-    const int numRow = (playerCount == 2) ? 8 : 10;
-    board = make_shared<Board>(numRow);
+    const int size = (playerCount == 2) ? 8 : 10;
+    board = make_shared<Board>(size);
     for (int i = 0; i < playerCount; ++i) {
-        players.emplace_back(make_shared<Player>(linkOrders[i], numRow, abilities[i], i + 1));
+        players.emplace_back(make_shared<Player>(linkOrders[i], size, abilities[i], i + 1));
     }
 }
 
@@ -55,11 +54,12 @@ string Game::getAbilityName(int i) {
 
 // update useAbility to check if already used ability before calling each function
 void Game::useAbility(int abilityNumber, int row, int col, const string &abilityName) {
-    const int numRow = (playerCount == 2) ? 8 : 10;
+    const int size = (playerCount == 2) ? 8 : 10;
     int playerIndex = currentTurn - 1;
     shared_ptr<Ability> ability = players[playerIndex]->getAbility(abilityNumber);
     if (ability->getIsActivated()) throw runtime_error(Err::abilityAlreadyUsed(ability->getAbilityName(), ability->getAbilityID()));
-    if (!(row >= 0 && row < numRow && col >= 0 && col < numCol)) throw out_of_range(Err::invalidCoordinates);
+    if (!(row >= 0 && row < size && col >= 0 && col < size)) throw out_of_range(Err::invalidCoordinates);
+    if (board->getCell(row,col).isLocked()) throw out_of_range(Err::invalidCoordinates);
     if (abilityName == "Firewall") {
         useFirewall(row, col);
     }
@@ -72,11 +72,12 @@ void Game::useAbility(int abilityNumber, int row, int col, const string &ability
 }
 
 void Game::useAbility(int abilityNumber, int r1, int c1, int r2, int c2) {
-    const int numRow = (playerCount == 2) ? 8 : 10;
+    const int size = (playerCount == 2) ? 8 : 10;
     int playerIndex = currentTurn - 1;
     shared_ptr<Ability> ability = players[playerIndex]->getAbility(abilityNumber);
     if (ability->getIsActivated()) throw runtime_error(Err::abilityAlreadyUsed(ability->getAbilityName(), ability->getAbilityID()));
-    if (!(r1 >= 0 && r1 < numRow && c1 >= 0 && c1 < numCol) || !(r2 >= 0 && r2 < numRow && c2 >= 0 && c2 < numCol)) throw out_of_range(Err::invalidCoordinates);
+    if (!(r1 >= 0 && r1 < size && c1 >= 0 && c1 < size) || !(r2 >= 0 && r2 < size && c2 >= 0 && c2 < size)) throw out_of_range(Err::invalidCoordinates);
+    if ((board->getCell(r1,c1).isLocked()) || (board->getCell(r2,c2).isLocked())) throw out_of_range(Err::invalidCoordinates);
     useWarp(r1, c1, r2, c2);
     players[playerIndex]->useAbility(abilityNumber);
     notifyObservers();
@@ -471,7 +472,10 @@ void Game::checkGameOver() {
                     currentTurn = (currentTurn % playerCount) + 1;
                     if (isActive(currentTurn)) break;
                 }
+                
                 gameOver = (activePlayers > 1) ? false : true;
+                if (gameOver) playerWon = currentTurn;
+
             } else {
                 gameOver = true;
                 playerWon = (i == 0) ? player2 : player1;
