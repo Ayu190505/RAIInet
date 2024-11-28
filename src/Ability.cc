@@ -1,6 +1,9 @@
 #include "Ability.h"
 #include <iostream>
 #include "Err.h"
+#include <string>
+
+const std::string ValidAbilities = "LFDPSTIW";
 
 Ability::Ability(char code, int id) : id{id}, isActivated{false} {
     switch (code)
@@ -60,4 +63,8 @@ bool Ability::getIsActivated() { return isActivated; }
 void Ability::useAbility(){
 	if (isActivated) throw runtime_error(Err::abilityAlreadyUsed(getAbilityName(), getAbilityID()));
 	else isActivated = !isActivated;
+}
+
+std::string Ability::getValidAbilities() {
+    return ValidAbilities;
 }

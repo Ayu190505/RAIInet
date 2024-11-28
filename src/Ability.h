@@ -18,6 +18,7 @@ class Ability {
         // other
         std::string getAbilityName(); 
         void useAbility();
+        static std::string getValidAbilities();
 };
 
 #endif

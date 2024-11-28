@@ -8,6 +8,7 @@
 #include "Game.h"
 #include "Err.h"
 #include "Controller.h"
+#include "Ability.h"
 
 using namespace std;
 
@@ -23,7 +24,7 @@ int main(int argc, const char* argv[]){
     // Argument checking here
     int numPlayers = 2;
     bool multipleDisplay = false;
-    string validAbilities = "LFDSPTWI";
+    string validAbilities = Ability::getValidAbilities();
     vector<string> playerAbilities(maxPlayers, "LFDSP"); // index + 1 represents player number
     vector<string> playerLinkOrders(maxPlayers); // same here
     for (int i = 0; i < maxPlayers; ++i) {
