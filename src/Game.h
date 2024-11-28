@@ -29,9 +29,6 @@ class Game : public Subject {
 
     // abilities
     void useAbility(int abilityNumber, const string &abilityName, const vector<any> &params);
-    // void useAbility(int abilityNumber, int row, int col, const string &abilityName);
-    // void useAbility(int abilityNumber, int r1, int c1, int r2, int c2);
-    // void useAbility(int abilityNumber, const string &abilityName, char link);
     void useFirewall(int row, int col);
     void useDownload(char link);
     void useLinkBoost(char link);
