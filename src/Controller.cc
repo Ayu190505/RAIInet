@@ -46,28 +46,40 @@ void Controller::run() const {
                 int abilityIndex = 0;
                 if (!(*in >> abilityIndex)) throw runtime_error(Err::invalidAbilityIndex);
                 string abilityName = game->getAbilityName(abilityIndex);
+
+                // stores any type
                 std::vector<std::any> params;
 
+                // what we expect the type of param for the function to take
+                std::vector<std::string> expectedParams;
+
                 if (abilityName == "Firewall" || abilityName == "Imprison") {
-                    int row, col;
-                    if (!(*in >> row >> col)) throw runtime_error(Err::expectedCoordinatesForFireWall);
-                    params.push_back(row);
-                    params.push_back(col);
+                    expectedParams = {"int", "int"};
                     // game->useAbility(abilityIndex, row, col, abilityName);
                 } else if (abilityName == "Warp") {
-                    int r1, c1, r2, c2;
-                    if (!(*in >> r1 >> c1 >> r2 >> c2)) throw runtime_error(Err::expectedCoordinatesForWarp);
-                    params.push_back(r1);
-                    params.push_back(c1);
-                    params.push_back(r2);
-                    params.push_back(c2);
+                    expectedParams = {"int", "int", "int", "int"};
                     // game->useAbility(abilityIndex, r1, c1, r2, c2);
                 } else {
-                    char c;
-                    if (!(*in >> c)) throw runtime_error(Err::expectedLinkIdentity);
-                    params.push_back(c);
+                    expectedParams = {"char"};
                     // game->useAbility(abilityIndex, abilityName, c);
                 }
+
+                for (const auto &parameterType : expectedParams) {
+                    if (parameterType == "int") {
+                        int input;
+                        if (!(*in >> input)) {
+                            if (abilityName == "Firewall") throw runtime_error(Err::expectedCoordinatesForFireWall);
+                            else if (abilityName == "Warp") throw runtime_error(Err::expectedCoordinatesForWarp); 
+                        }
+                        params.push_back(input);
+                    }
+                    else if (parameterType == "char") {
+                        char link;
+                        if (!(*in >> link)) throw runtime_error(Err::expectedLinkIdentity);
+                        params.push_back(link);
+                    }
+                }
+
                 game->useAbility(abilityIndex, abilityName, params);
                 abilityUsedThisTurn = true;
             } else if (command == "board") {
