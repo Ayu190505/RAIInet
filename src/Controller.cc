@@ -1,5 +1,7 @@
 #include "Controller.h"
 #include <limits>
+#include <any>
+#include "Ability.h"
 
 void setUpObservers(const shared_ptr<Game> game, vector<shared_ptr<Observer>> &observers, int numPlayers, bool graphicsEnabled, bool multipleDisplay);
 
@@ -45,23 +47,33 @@ void Controller::run() const {
                 int abilityIndex = 0;
                 if (!(*in >> abilityIndex)) throw runtime_error(Err::invalidAbilityIndex);
                 string abilityName = game->getAbilityName(abilityIndex);
-                if (abilityName == "Firewall") {
-                    int row, col;
-                    if (!(*in >> row >> col)) throw runtime_error(Err::expectedCoordinatesForFireWall);
-                    game->useAbility(abilityIndex, row, col, abilityName);
-                } else if(abilityName == "Imprison") {
-                    int r,c;
-                    if (!(*in >> r >> c)) throw runtime_error(Err::expectedCoordinatesForFireWall);
-                    game->useAbility(abilityIndex, r, c, abilityName);
-                } else if (abilityName == "Warp") {
-                    int r1, c1, r2, c2;
-                    if (!(*in >> r1 >> c1 >> r2 >> c2)) throw runtime_error(Err::expectedCoordinatesForFireWall);
-                    game->useAbility(abilityIndex, r1, c1, r2, c2);
-                } else {
-                    char c;
-                    if (!(*in >> c)) throw runtime_error(Err::expectedLinkIdentity);
-                    game->useAbility(abilityIndex, abilityName, c);
+
+                // stores any type
+                std::vector<std::any> params;
+
+                // what we expect the type of param for the function to take
+                std::vector<std::string> expectedParams = Ability::getExpectedParams(abilityName);
+                int paramNum = 1; // to track which specific param was invalid
+                for (const auto &parameterType : expectedParams) {
+                    if (parameterType == "int") {
+                        int input;
+                        if (!(*in >> input)) throw runtime_error(Err::abilityExpectsInputOf(abilityName, paramNum, "an integer"));
+                        params.push_back(input);
+                    }
+                    else if (parameterType == "char") {
+                        char input;
+                        if (!(*in >> input)) throw runtime_error(Err::abilityExpectsInputOf(abilityName, paramNum, "a char"));
+                        params.push_back(input);
+                    }
+                    else if (parameterType == "string") {
+                        string input;
+                        if (!(*in >> input)) throw runtime_error(Err::abilityExpectsInputOf(abilityName, paramNum, "a string"));
+                        params.push_back(input);
+                    }
+                    ++paramNum;
                 }
+
+                game->useAbility(abilityIndex, abilityName, params);
                 abilityUsedThisTurn = true;
             } else if (command == "board") {
                 // change to just display board

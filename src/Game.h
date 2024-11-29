@@ -1,5 +1,6 @@
 #ifndef GAME_H
 #define GAME_H
+#include <any>
 #include <vector>
 #include <memory>
 #include <string>
@@ -27,9 +28,7 @@ class Game : public Subject {
     Game(int playerCount, const vector<string> &linkOrders, const vector<string> &abilities, bool graphicsEnabled);
 
     // abilities
-    void useAbility(int abilityNumber, int row, int col, const string &abilityName);
-    void useAbility(int abilityNumber, int r1, int c1, int r2, int c2);
-    void useAbility(int abilityNumber, const string &abilityName, char link);
+    void useAbility(int abilityNumber, const string &abilityName, const vector<any> &params);
     void useFirewall(int row, int col);
     void useDownload(char link);
     void useLinkBoost(char link);

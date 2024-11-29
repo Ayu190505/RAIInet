@@ -146,8 +146,8 @@ void Graphics::notify() {
     w.fillRectangle(270, 95, 182, 90, Xwindow::White);
     w.drawString(40, 110, "Player " + to_string(currPlayerNumber) + ":");
     w.drawString(270, 110, "Player " + to_string((currPlayerNumber % 2) + 1) + ":");
-    w.drawString(40, 125, "Downloaded: D" + to_string(currPlayer->getDataDownloaded()) + ", V" + to_string(currPlayer->getVirusDownloaded()));
-    w.drawString(270, 125, "Downloaded: D" + to_string(opp->getDataDownloaded()) + ", V" + to_string(opp->getVirusDownloaded()));
+    w.drawString(40, 125, "Downloaded: " + to_string(currPlayer->getDataDownloaded()) + "D, " + to_string(currPlayer->getVirusDownloaded()));
+    w.drawString(270, 125, "Downloaded: " + to_string(opp->getDataDownloaded()) + ", V" + to_string(opp->getVirusDownloaded()));
     w.drawString(40, 140, "Abilities: " + to_string(currPlayer->getRemainingAbilities()));
     w.drawString(270, 140, "Abilities: " + to_string(opp->getRemainingAbilities()));
     for (int i = 0; i < 2; ++i) {
@@ -334,10 +334,10 @@ void Graphics::displayAbilities() {
     auto player = game->getPlayer(currPlayer);
     for (int i = 0; i < abilitiesLen - 1; ++i) {
         auto ability = player->getAbility(i + 1);
-        abilities += to_string(ability->getAbilityID()) +  ": " + ability->getAbilityName() + "[" + (ability->getIsActivated() ? "Used]" : "NUsed] ");
+        abilities += to_string(ability->getAbilityID()) +  ": " + ability->getAbilityName() + "[" + (ability->getIsActivated() ? "Used]" : "X] ");
     }
     auto ability = player->getAbility(abilitiesLen);
-    abilities += to_string(ability->getAbilityID()) +  ": " + ability->getAbilityName() + "[" + (ability->getIsActivated() ? "Used]" : "NUsed]");
+    abilities += to_string(ability->getAbilityID()) +  ": " + ability->getAbilityName() + "[" + (ability->getIsActivated() ? "Used]" : "X]");
     string fontName = "lucidasans-10";
     w.drawStringFont(0, windowHeight - 300, abilities, fontName, Xwindow::Black);
     chrono::milliseconds timespan(3000);
@@ -360,11 +360,13 @@ void Graphics::displayError(const string &err) {
 
 void Graphics::displayGameOver() {
     auto game = g.lock();
-    w.fillRectangle(0, 0, windowWidth, windowWidth, Xwindow::White);
+    w.fillRectangle(0, 0, windowWidth, windowHeight, Xwindow::DarkGold);
     int desiredPixelSize = 50;
     string fontName = "-*-helvetica-bold-r-normal--" + to_string(desiredPixelSize) + "-*-*-*-*-*-*-*";
     string toDisplay = "Player " + to_string(game->getPlayerWon()) + " Wins!";
-    w.drawStringFont(100, 300, toDisplay, fontName);
+    w.drawStringFont(50, 200, "Congratulations!!", fontName);
+    w.drawStringFont(80, 300, toDisplay, fontName);
     chrono::milliseconds timespan(5000);
     this_thread::sleep_for(timespan);
 }
+

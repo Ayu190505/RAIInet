@@ -3,6 +3,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <compare>
+#include <any>
 #include "Err.h"
 #include "Ability.h"
 #include "Graphics.h"
@@ -18,6 +19,9 @@ const int player3 = 3;
 const int player4 = 4;
 
 const int gameOverCondition = 4;
+
+
+// helpers
 
 bool in(int x, int l, int u);
 
@@ -37,6 +41,12 @@ bool validDirection(const string &direction);
 
 void getNewCords(int &row, int &col, shared_ptr<Link> &moveLink, const string &direction);
 
+void validatePreMove(char link, const string &direction, int currentTurn);
+
+void validateLinkStatus(shared_ptr<Link> currLink,  Cell &oldcell);
+
+void imprisonCellsHandler(vector<Cell*> &trappedCells);
+
 
 Game::Game(int playerCount, const vector<string> &linkOrders, const vector<string> &abilities, bool graphicsEnabled) : playerCount{playerCount}, activePlayers{playerCount}, graphicsEnabled{graphicsEnabled} {
     const int size = (playerCount == 2) ? 8 : 10;
@@ -52,79 +62,66 @@ string Game::getAbilityName(int i) {
     return players[currentTurn - 1]->getAbilityName(i);
 }
 
-// update useAbility to check if already used ability before calling each function
-void Game::useAbility(int abilityNumber, int row, int col, const string &abilityName) {
+void Game::useAbility(int abilityNumber, const string &abilityName, const std::vector<std::any> &params) {
     const int size = (playerCount == 2) ? 8 : 10;
     int playerIndex = currentTurn - 1;
     shared_ptr<Ability> ability = players[playerIndex]->getAbility(abilityNumber);
     if (ability->getIsActivated()) throw runtime_error(Err::abilityAlreadyUsed(ability->getAbilityName(), ability->getAbilityID()));
-    if (!(row >= 0 && row < size && col >= 0 && col < size)) throw out_of_range(Err::invalidCoordinates);
-    if (board->getCell(row,col).isLocked()) throw out_of_range(Err::invalidCoordinates);
-    if (abilityName == "Firewall") {
-        useFirewall(row, col);
-    }
-    else if (abilityName == "Imprison") {
-        useImprison(row, col);
-    }
-    players[playerIndex]->useAbility(abilityNumber);
-    checkGameOver(); // is this necessary? you can't win after placing a firewall
-    notifyObservers();
-}
 
-void Game::useAbility(int abilityNumber, int r1, int c1, int r2, int c2) {
-    const int size = (playerCount == 2) ? 8 : 10;
-    int playerIndex = currentTurn - 1;
-    shared_ptr<Ability> ability = players[playerIndex]->getAbility(abilityNumber);
-    if (ability->getIsActivated()) throw runtime_error(Err::abilityAlreadyUsed(ability->getAbilityName(), ability->getAbilityID()));
-    if (!(r1 >= 0 && r1 < size && c1 >= 0 && c1 < size) || !(r2 >= 0 && r2 < size && c2 >= 0 && c2 < size)) throw out_of_range(Err::invalidCoordinates);
-    if ((board->getCell(r1,c1).isLocked()) || (board->getCell(r2,c2).isLocked())) throw out_of_range(Err::invalidCoordinates);
-    useWarp(r1, c1, r2, c2);
-    players[playerIndex]->useAbility(abilityNumber);
-    notifyObservers();
-}
+    if (abilityName == "Firewall" || abilityName == "Imprison") {
+        int row = std::any_cast<int>(params[0]);
+        int col = std::any_cast<int>(params[1]);
 
-void Game::useAbility(int abilityNumber, const string &abilityName, char link) {
-    int playerIndex = currentTurn - 1;
-    shared_ptr<Ability> ability = players[playerIndex]->getAbility(abilityNumber);
-    if (ability->getIsActivated()) throw runtime_error(Err::abilityAlreadyUsed(ability->getAbilityName(), ability->getAbilityID()));
-    if (!validLink(link)) throw runtime_error(Err::invalidLink);
-    if (abilityName == "LinkBoost") {
-        useLinkBoost(link);
-    } else if (abilityName == "Download") {
-        useDownload(link);
-    } else if (abilityName == "Polarise") {
-        usePolarise(link);
-    } else if (abilityName == "Scan") {
-        useScan(link);
-    } else if (abilityName == "Trojan") {
-        useTrojan(link);
+        if (!(row >= 0 && row < size && col >= 0 && col < size)) throw out_of_range(Err::invalidCoordinates);
+        if (board->getCell(row,col).isLocked()) throw out_of_range(Err::invalidCoordinates);
+
+        if (abilityName == "Firewall") useFirewall(row, col);
+        else if (abilityName == "Imprison") useImprison(row, col);
     }
+    else if (abilityName == "Warp") {
+        int r1 = std::any_cast<int>(params[0]);
+        int c1 = std::any_cast<int>(params[1]);
+        int r2 = std::any_cast<int>(params[2]);
+        int c2 = std::any_cast<int>(params[3]);
+
+        if (!(r1 >= 0 && r1 < size && c1 >= 0 && c1 < size) || !(r2 >= 0 && r2 < size && c2 >= 0 && c2 < size)) throw out_of_range(Err::invalidCoordinates);
+        if ((board->getCell(r1,c1).isLocked()) || (board->getCell(r2,c2).isLocked())) throw out_of_range(Err::invalidCoordinates);
+
+        useWarp(r1, c1, r2, c2);
+    }
+    else {
+        char link = std::any_cast<char>(params[0]);
+        if (!validLink(link)) throw runtime_error(Err::invalidLink);
+
+        if (abilityName == "LinkBoost") useLinkBoost(link);
+        else if (abilityName == "Download") useDownload(link);
+        else if (abilityName == "Polarise") usePolarise(link);
+        else if (abilityName == "Scan") useScan(link);
+        else if (abilityName == "Trojan") useTrojan(link);
+    }
+
     players[playerIndex]->useAbility(abilityNumber);
     checkGameOver();
     notifyObservers();
 }
 
 void Game::move(char link, const string &direction) {
-    // basic validations
-    if (!(validLink(link))) throw runtime_error(Err::invalidLink);
-    if (!(validDirection(direction))) throw runtime_error(Err::invalidDirection);
-    if (!(validPiLink(link, currentTurn))) throw runtime_error(Err::cannotMoveOpponentsLink);
-
+    // validate premoves (if moving a valid link, in a valid direction, and if link is yours)
+    validatePreMove(link, direction, currentTurn);
+    
     int playerIndex = currentTurn - 1;
-
     shared_ptr<Link> currLink = players[playerIndex]->getLink(link, currentTurn);
-    
-    // validating if moving a downloaded/trapped link
-    if (currLink->getIsDownloaded()) throw runtime_error(Err::cannotMoveDownloadedLink);
-    // TODO: check if trying to move a trapped link
-    
+
     // get cords of cell we're moving to
     int newRow = 0, newCol = 0;
     getNewCords(newRow, newCol, currLink, direction);
     
     // check in bounds
     Cell &oldCell = board->getCell(currLink->getRow(), currLink->getCol());
-    if (oldCell.isImprison()) throw runtime_error(Err::cannotMoveImprisonedLink);
+    
+    // check if trying to move a downloaded/imprisoned link
+    validateLinkStatus(currLink, oldCell);
+    
     // valid iff player moves off opponents edge of the board
     bool validOB = validOutOfBounds(newRow, newCol); // throws error if not valid bounds
     if (validOB) {
@@ -136,17 +133,9 @@ void Game::move(char link, const string &direction) {
             currentTurn = (currentTurn % playerCount) + 1; // (1 % 2) + 1 
             if (isActive(currentTurn)) break;
         }
+        imprisonCellsHandler(trappedCells);
+        
 
-        for (auto i: trappedCells) {
-            if (i->isImprison()) {
-                i->decrementImprisonCounter(); 
-                cout << i->getImprisonCounter() << endl;
-            }
-            // check if imprison counter is 0, deactive the trap
-            if (i->getImprisonCounter() == 0) {
-                i->setImprison(false);
-            }
-        }
         checkGameOver();
         notifyObservers();
         return;
@@ -290,16 +279,7 @@ void Game::move(char link, const string &direction) {
         if (isActive(currentTurn)) break;
     }
 
-    for (auto i: trappedCells) {
-        if (i->isImprison()) {
-            i->decrementImprisonCounter(); 
-            cout << i->getImprisonCounter() << endl;
-        }
-        // check if imprison counter is 0, deactive the trap
-        if (i->getImprisonCounter() == 0) {
-            i->setImprison(false);
-        }
-    }
+    imprisonCellsHandler(trappedCells);
 
     checkGameOver();
     notifyObservers();
@@ -677,4 +657,27 @@ bool validP3Link(char link) {
 
 bool validP4Link(char link) {
     return (link >= 'I') && (link <= 'P');
+}
+
+void validatePreMove(char link, const string &direction, int currentTurn) {
+    if (!(validLink(link))) throw runtime_error(Err::invalidLink);
+    if (!(validDirection(direction))) throw runtime_error(Err::invalidDirection);
+    if (!(validPiLink(link, currentTurn))) throw runtime_error(Err::cannotMoveOpponentsLink);
+}
+
+void validateLinkStatus(shared_ptr<Link> currLink,  Cell &oldcell) {
+    if (currLink->getIsDownloaded()) throw runtime_error(Err::cannotMoveLinkWithStatus("downloaded"));
+    if (oldcell.isImprison()) throw runtime_error(Err::cannotMoveLinkWithStatus("imprisoned"));
+}
+
+void imprisonCellsHandler(vector<Cell*> &trappedCells) {
+    for (auto i: trappedCells) {
+        if (i->isImprison()) {
+            i->decrementImprisonCounter(); 
+        }
+        // check if imprison counter is 0, deactive the trap
+        if (i->getImprisonCounter() == 0) {
+            i->setImprison(false);
+        }
+    }
 }

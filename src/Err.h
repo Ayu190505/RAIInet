@@ -5,15 +5,12 @@
 
 using namespace std;
 
-class Err {
-    public:
+struct Err {
     static string insufficientArgs;
     static string invalidArg;
     static string invalidCommandLineArg;
     static string invalidRuntimeCommand;
     static string invalidPlayerNumber;
-    static string invalidAbilities;
-    static string invalidAbility;
     static string invalidAbilityIndex;
     static string expectedCoordinatesForFireWall;
     static string expectedCoordinatesForWarp;
@@ -39,11 +36,16 @@ class Err {
     static string cannotBattleImprisonedLink;
     static string notInBounds;
     static string cannotMoveOntoOwnLink;
+
+    static string cannotMoveLinkWithStatus(const string &status);
     static string cannotDownloadOwnLink(bool SP); // self server port and self side bound
     static string cannotUseAbilityOnOwnLink(const string &ability);
     static string cannotUseAbilityOnOtherLink(const string &ability);
     static string abilityAlreadyUsed(const string &name, int index);
     static string cannotUseAbilityonOtherAbility(const string &ability, const string &otherAbility);
+    static std::string invalidAbilities();
+    static std::string invalidAbility();
+    static std::string abilityExpectsInputOf(const string &ability, const int paramNum, const string &input);
 };
 
 #endif

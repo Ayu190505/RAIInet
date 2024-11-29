@@ -8,6 +8,7 @@
 #include "Game.h"
 #include "Err.h"
 #include "Controller.h"
+#include "Ability.h"
 
 using namespace std;
 
@@ -23,7 +24,7 @@ int main(int argc, const char* argv[]){
     // Argument checking here
     int numPlayers = 2;
     bool multipleDisplay = false;
-    string validAbilities = "LFDSPTWI";
+    string validAbilities = Ability::getValidAbilities();
     vector<string> playerAbilities(maxPlayers, "LFDSP"); // index + 1 represents player number
     vector<string> playerLinkOrders(maxPlayers); // same here
     for (int i = 0; i < maxPlayers; ++i) {
@@ -100,7 +101,7 @@ string randomLinkGenerator() {
 }
 
 void areAbilitiesValid(const string &s, const string &validAbilities) {
-    if (s.length() != abilitiesLength) throw invalid_argument(Err::invalidAbilities);
+    if (s.length() != abilitiesLength) throw invalid_argument(Err::invalidAbilities());
     unordered_map<char, int> mp;
     for (size_t i = 0; i < validAbilities.size(); ++i) {
         mp[validAbilities[i]] = 0;
@@ -110,7 +111,7 @@ void areAbilitiesValid(const string &s, const string &validAbilities) {
         if (mp.find(c) != mp.end() && mp[c] < maxOfEachAbility) {
             ++mp[c];
         } else {
-            throw invalid_argument(Err::invalidAbilities);
+            throw invalid_argument(Err::invalidAbilities());
         }
     }
 }

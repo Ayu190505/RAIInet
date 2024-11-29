@@ -1,6 +1,10 @@
 #include "Ability.h"
 #include <iostream>
+#include <vector>
 #include "Err.h"
+#include <string>
+
+const std::string ValidAbilities = "LFDPSTIW";
 
 Ability::Ability(char code, int id) : id{id}, isActivated{false} {
     switch (code)
@@ -29,7 +33,7 @@ Ability::Ability(char code, int id) : id{id}, isActivated{false} {
             case 'W':   
                 ability = Abilities::Warp;
                 break;
-            default: throw(Err::invalidAbility + ", hence " + std::to_string(code) + " is invalid.");
+            default: throw(Err::invalidAbility() + ", hence " + std::to_string(code) + " is invalid.");
         }
 }
 
@@ -52,7 +56,6 @@ std::string Ability::getAbilityName(){
         case Abilities::Warp: return "Warp";
     }
     return "";
-    
 }
 
 bool Ability::getIsActivated() { return isActivated; }
@@ -60,4 +63,27 @@ bool Ability::getIsActivated() { return isActivated; }
 void Ability::useAbility(){
 	if (isActivated) throw runtime_error(Err::abilityAlreadyUsed(getAbilityName(), getAbilityID()));
 	else isActivated = !isActivated;
+}
+
+std::string Ability::getValidAbilities() {
+    return ValidAbilities;
+}
+
+std::vector<std::string> Ability::getExpectedParams(const string &abilityName) {
+    std::vector<std::string> expectedParams;
+
+    // abilities applied to a coordinate
+    if (abilityName == "Firewall" || abilityName == "Imprison") {
+        expectedParams = {"int", "int"};
+    }
+    // abilities applied to 2 coordinates
+    else if (abilityName == "Warp") {
+        expectedParams = {"int", "int", "int", "int"};
+    }
+    // abilities applied directly on a link
+    else {
+        expectedParams = {"char"};
+    }
+
+    return expectedParams;
 }

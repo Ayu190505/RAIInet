@@ -1,6 +1,7 @@
 #ifndef ABILITY_H
 #define ABILITY_H
 #include <string>
+#include <vector>
 
 class Ability {
     int id;
@@ -18,6 +19,8 @@ class Ability {
         // other
         std::string getAbilityName(); 
         void useAbility();
+        static std::string getValidAbilities();
+        static std::vector<std::string> getExpectedParams(const std::string &abilityName);
 };
 
 #endif
