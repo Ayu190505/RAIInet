@@ -11,7 +11,6 @@ using namespace std;
 const int windowWidth = 480;
 const int windowHeight = 800;
 const int namePadding = 50;
-const int cellSize = 80;
 const auto nameColour = Xwindow::CornFlowerBlue;
 const char p1Firewall = '^';
 const char p2Firewall = 'v';
@@ -22,6 +21,7 @@ const char p2Basechar = 'A';
 const char p3BaseChar = 'i';
 const char p4BaseChar = 'I';
 const char serverPort = 'S';
+const char blockedServerPort = '$';
 const char warpChar = '*';
 const char imprisonChar = '@';
 const int player1 = 1;
@@ -282,7 +282,8 @@ void Graphics::notify() {
                 w.fillRectangle(x + 1, y + 1, cellSize - 2, cellSize - 2, Xwindow::Black);      
             } else if (cell.isServerPort()) {
                 w.fillRectangle(x + 1, y + 1, cellSize - 2, cellSize - 2, Xwindow::DarkGold);
-                w.drawString(centerX, centerY, "S");
+                if (cell.isOwnServerPort(currPlayerNumber) && cell.getBlocked()) w.drawString(centerX, centerY, "$");
+                else w.drawString(centerX, centerY, "S");
             } else if (!cell.isEmpty()) {
                 char content = cell.getContent();
                 if (PiLink(content, currPlayerNumber)) {
@@ -310,7 +311,7 @@ void Graphics::notify() {
                     w.drawString(centerX, centerY, s);
                 }
             } else if (cell.hasFirewall()) {
-                int playerFirewall = cell.getWhoseFirewall();
+                int playerFirewall = cell.getPlayersFirewall();
                 w.fillRectangle(x + 1, y + 1, cellSize - 2, cellSize - 2, Xwindow::Orange);
                 string fireWallString = "";
                 if (playerFirewall == player1) {

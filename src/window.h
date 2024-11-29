@@ -34,16 +34,9 @@ class Xwindow {
     void drawStringFont(int x, int y, string msg, string fontName, int colour=Black);
     void drawLine(int x1, int y1, int x2, int y2, int colour=Black);
 
-    // getters for width and height
-    int getWidth() const {return width;}
-    int getHeight() const {return height;}
-    
     // Loads a font
     void loadFont(string fontName);
     
-    // Draws a Circle
-	  void fillCircle (int x, int y, int r, int colour);
-	  void drawCircle (int x, int y, int r, int colour);
 };
 
 #endif

@@ -173,3 +173,7 @@ void Cell::setServerPort(bool b) {
 void Cell::setBlocked(bool what) {
     blocked = what;
 }
+
+void Cell::setLocked(bool b) {
+    locked = b;
+}

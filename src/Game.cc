@@ -329,6 +329,7 @@ void Game::useOmit(int row, int col) {
     coordinateAbilityValidate("Omit", cell);
     
     cell.setContent(' ');
+    cell.setLocked(true);
 }
 
 void Game::useScan(char l) {
@@ -688,7 +689,7 @@ void imprisonCellsHandler(vector<Cell*> &trappedCells) {
 }
 
 void coordinateAbilityValidate(const string &abilityName, const Cell &cell) {
-    if (cell.getContent() == ' ') throw runtime_error(Err::cannotInteractWithOmittedCell);
+    if (cell.isLocked() || cell.getContent() == ' ') throw runtime_error(Err::cannotInteractWithOmittedCell);
     if (cell.isServerPort()) throw runtime_error(Err::cannotUseAbilityonOtherAbility(abilityName, "Server Port"));
     if (cell.hasFirewall()) throw runtime_error(Err::cannotUseAbilityonOtherAbility(abilityName, "Firewall"));
     if (abilityName != "Firewall" && !(cell.isEmpty())) throw runtime_error(Err::cannotUseAbilityonOtherAbility(abilityName, "Link"));
@@ -697,9 +698,9 @@ void coordinateAbilityValidate(const string &abilityName, const Cell &cell) {
 }
 
 void validatePostMove(const Cell &newCell, const int currentTurn) {
-    if (newCell.isLocked()) throw runtime_error(Err::notInBounds); 
+    if (newCell.isLocked() && newCell.getContent() == '.') throw runtime_error(Err::notInBounds); 
     if (newCell.isOwnServerPort(currentTurn)) throw runtime_error(Err::cannotDownloadOwnLink(true));
     if (validPiLink(newCell.getContent(), currentTurn)) throw runtime_error(Err::cannotMoveOntoOwnLink);
     if ((newCell.isImprison()) && (!(newCell.isEmpty()))) throw runtime_error(Err::cannotBattleImprisonedLink);
-    if (newCell.getContent() == ' ') throw runtime_error(Err::cannotInteractWithOmittedCell);
+    if (newCell.isLocked() || newCell.getContent() == ' ') throw runtime_error(Err::cannotInteractWithOmittedCell);
 }

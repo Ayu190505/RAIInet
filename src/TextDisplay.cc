@@ -128,7 +128,8 @@ void TextObserver::notify() {
                 out << setw(0) << '.';
             } else if (cell.isServerPort()) {
                 if (game->getPlayer(cell.getPlayersServerPort())->getEliminated()) out << '.';
-                else if (cell.isOwnServerPort(game->getCurrentTurn()) && cell.getBlocked()) out << '$';
+                else if (cell.isOwnServerPort(game->getCurrentTurn()) && cell.getBlocked() && !multipleDisplay) out << '$';
+                else if (cell.isOwnServerPort(playerNumber) && cell.getBlocked() && multipleDisplay) out << '$';
                 else out << setw(0) << serverPort;
             } else if (cell.isWarp()) {
                 out << setw(0) << warpChar;

@@ -124,15 +124,3 @@ void Xwindow::drawLine(int x1, int y1, int x2, int y2, int colour) {
     XSetForeground(d, gc, colours[colour]);
     XDrawLine(d, w, gc, x1, y1, x2, y2);
 }
-
-void Xwindow::fillCircle (int x, int y, int r, int colour) {
-	XSetForeground(d, gc, colours[colour]);
-	XFillArc(d, w, gc, x, y, r, r, 0, 360*64);
-	XFlush(d);
-}
-
-void Xwindow::drawCircle (int x, int y, int r, int colour) {
-	XSetForeground(d, gc, colours[colour]);
-	XDrawArc(d, w, gc, x, y, r, r, 0, 360*64);
-	XFlush(d);
-}

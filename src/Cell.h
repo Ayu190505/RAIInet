@@ -62,6 +62,7 @@ class Cell {
     int getRow() const;
     int getCol() const;
     char getContent() const;
+    void setLocked(bool b);
 
     // other
     void setContent(char content);
