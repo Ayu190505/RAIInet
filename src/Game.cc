@@ -76,6 +76,7 @@ void Game::useAbility(int abilityNumber, const string &abilityName, const std::v
         int col = std::any_cast<int>(params[1]);
 
         if (!(row >= 0 && row < size && col >= 0 && col < size)) throw out_of_range(Err::invalidCoordinates);
+        if (board->getCell(row,col).isLocked() && board->getCell(row, col).getContent() == ' ') throw runtime_error(Err::cannotInteractWithOmittedCell);
         if (board->getCell(row,col).isLocked()) throw out_of_range(Err::invalidCoordinates);
 
         if (abilityName == "Firewall") useFirewall(row, col);
