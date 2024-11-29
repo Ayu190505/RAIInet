@@ -88,3 +88,7 @@ std::string Err::invalidAbility() {
 std::string Err::abilityExpectsInputOf(const std::string &ability, const int paramNum, const std::string &input) {
     return "The parameter at position " + std::to_string(paramNum) + " for " + ability + " is expected to be " + input + '!';
 }
+
+std::string Err::cannotMoveLinkWithStatus(const string &status) {
+    return "You cannot move a link that is " + status + '!';
+}

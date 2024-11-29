@@ -37,6 +37,7 @@ struct Err {
     static string notInBounds;
     static string cannotMoveOntoOwnLink;
 
+    static string cannotMoveLinkWithStatus(const string &status);
     static string cannotDownloadOwnLink(bool SP); // self server port and self side bound
     static string cannotUseAbilityOnOwnLink(const string &ability);
     static string cannotUseAbilityOnOtherLink(const string &ability);

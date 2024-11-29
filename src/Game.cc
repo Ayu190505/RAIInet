@@ -20,6 +20,9 @@ const int player4 = 4;
 
 const int gameOverCondition = 4;
 
+
+// helpers
+
 bool in(int x, int l, int u);
 
 bool validPiLink(char link, int p);
@@ -39,6 +42,10 @@ bool validDirection(const string &direction);
 void getNewCords(int &row, int &col, shared_ptr<Link> &moveLink, const string &direction);
 
 void validatePreMove(char link, const string &direction, int currentTurn);
+
+void validateLinkStatus(shared_ptr<Link> currLink,  Cell &oldcell);
+
+void imprisonCellsHandler(vector<Cell*> &trappedCells);
 
 
 Game::Game(int playerCount, const vector<string> &linkOrders, const vector<string> &abilities, bool graphicsEnabled) : playerCount{playerCount}, activePlayers{playerCount}, graphicsEnabled{graphicsEnabled} {
@@ -99,24 +106,22 @@ void Game::useAbility(int abilityNumber, const string &abilityName, const std::v
 }
 
 void Game::move(char link, const string &direction) {
-    // basic validations
+    // validate premoves (if moving a valid link, in a valid direction, and if link is yours)
     validatePreMove(link, direction, currentTurn);
-
+    
     int playerIndex = currentTurn - 1;
-
     shared_ptr<Link> currLink = players[playerIndex]->getLink(link, currentTurn);
-    
-    // validating if moving a downloaded/trapped link
-    if (currLink->getIsDownloaded()) throw runtime_error(Err::cannotMoveDownloadedLink);
-    // TODO: check if trying to move a trapped link
-    
+
     // get cords of cell we're moving to
     int newRow = 0, newCol = 0;
     getNewCords(newRow, newCol, currLink, direction);
     
     // check in bounds
     Cell &oldCell = board->getCell(currLink->getRow(), currLink->getCol());
-    if (oldCell.isImprison()) throw runtime_error(Err::cannotMoveImprisonedLink);
+    
+    // check if trying to move a downloaded/imprisoned link
+    validateLinkStatus(currLink, oldCell);
+    
     // valid iff player moves off opponents edge of the board
     bool validOB = validOutOfBounds(newRow, newCol); // throws error if not valid bounds
     if (validOB) {
@@ -128,17 +133,8 @@ void Game::move(char link, const string &direction) {
             currentTurn = (currentTurn % playerCount) + 1; // (1 % 2) + 1 
             if (isActive(currentTurn)) break;
         }
+        imprisonCellsHandler(trappedCells);
 
-        for (auto i: trappedCells) {
-            if (i->isImprison()) {
-                i->decrementImprisonCounter(); 
-                cout << i->getImprisonCounter() << endl;
-            }
-            // check if imprison counter is 0, deactive the trap
-            if (i->getImprisonCounter() == 0) {
-                i->setImprison(false);
-            }
-        }
         checkGameOver();
         notifyObservers();
         return;
@@ -282,16 +278,7 @@ void Game::move(char link, const string &direction) {
         if (isActive(currentTurn)) break;
     }
 
-    for (auto i: trappedCells) {
-        if (i->isImprison()) {
-            i->decrementImprisonCounter(); 
-            cout << i->getImprisonCounter() << endl;
-        }
-        // check if imprison counter is 0, deactive the trap
-        if (i->getImprisonCounter() == 0) {
-            i->setImprison(false);
-        }
-    }
+    imprisonCellsHandler(trappedCells);
 
     checkGameOver();
     notifyObservers();
@@ -675,4 +662,21 @@ void validatePreMove(char link, const string &direction, int currentTurn) {
     if (!(validLink(link))) throw runtime_error(Err::invalidLink);
     if (!(validDirection(direction))) throw runtime_error(Err::invalidDirection);
     if (!(validPiLink(link, currentTurn))) throw runtime_error(Err::cannotMoveOpponentsLink);
+}
+
+void validateLinkStatus(shared_ptr<Link> currLink,  Cell &oldcell) {
+    if (currLink->getIsDownloaded()) throw runtime_error(Err::cannotMoveLinkWithStatus("downloaded"));
+    if (oldcell.isImprison()) throw runtime_error(Err::cannotMoveLinkWithStatus("imprisoned"));
+}
+
+void imprisonCellsHandler(vector<Cell*> &trappedCells) {
+    for (auto i: trappedCells) {
+        if (i->isImprison()) {
+            i->decrementImprisonCounter(); 
+        }
+        // check if imprison counter is 0, deactive the trap
+        if (i->getImprisonCounter() == 0) {
+            i->setImprison(false);
+        }
+    }
 }
