@@ -470,3 +470,4 @@ void Graphics::update(int &num, bool row) const {
 
     num += shift;
 }
+

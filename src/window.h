@@ -40,3 +40,4 @@ class Xwindow {
 };
 
 #endif
+

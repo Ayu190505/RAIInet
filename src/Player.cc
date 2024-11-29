@@ -152,3 +152,4 @@ shared_ptr<Link> Player::getLink(char c, int playerNumber) {
     
     return links[index];
 }
+

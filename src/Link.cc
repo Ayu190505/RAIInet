@@ -83,4 +83,4 @@ void Link::trojan() {
     if (isTrojan) throw runtime_error(Err::LinkIsAlready("a trojan"));
     isTrojan = true;
 }
-    
+

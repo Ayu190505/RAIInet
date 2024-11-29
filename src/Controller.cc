@@ -126,3 +126,4 @@ void setUpObservers(const shared_ptr<Game> game, vector<shared_ptr<Observer>> &o
         observers.emplace_back(t);
     }
 }
+

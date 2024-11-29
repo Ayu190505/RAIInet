@@ -704,3 +704,4 @@ void validatePostMove(const Cell &newCell, const int currentTurn) {
     if ((newCell.isImprison()) && (!(newCell.isEmpty()))) throw runtime_error(Err::cannotBattleImprisonedLink);
     if (newCell.isLocked() || newCell.getContent() == ' ') throw runtime_error(Err::cannotInteractWithOmittedCell);
 }
+

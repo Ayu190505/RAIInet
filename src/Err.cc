@@ -96,3 +96,4 @@ std::string Err::abilityExpectsInputOf(const std::string &ability, const int par
 std::string Err::cannotMoveLinkWithStatus(const string &status) {
     return "You cannot move a link that is " + status + '!';
 }
+

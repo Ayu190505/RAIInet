@@ -145,3 +145,4 @@ string retrieveLink(ifstream &file) {
     }
     return linkOrder;
 }
+

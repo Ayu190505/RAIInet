@@ -177,3 +177,4 @@ void Cell::setBlocked(bool what) {
 void Cell::setLocked(bool b) {
     locked = b;
 }
+
