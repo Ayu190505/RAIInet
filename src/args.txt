@@ -1,0 +1,3 @@
+outOfBounds: ./Raiinet -ability1 LLDDP  -ability2 LLDPP -link1 test/1link1.txt -link2 test/1link2.txt
+firewall: ./Raiinet -ability1 FFWWI -ability2 FFWWI -link1 test/1link1.txt -link2 test/1link2.txt
+restAbilities: firewall: ./Raiinet -ability1 PPSII -ability2 PPSII -link1 test/1link1.txt -link2 test/1link2.txt
