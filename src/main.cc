@@ -50,11 +50,11 @@ int main(int argc, const char* argv[]){
                 if (i >= argc) throw out_of_range(Err::insufficientArgs);
                 ifstream file{argv[i]};
                 playerLinkOrders[linkIndex] = retrieveLink(file);
-            } else if (arg == "graphics") {
+            } else if (arg == "-graphics") {
                 graphicsEnabled = true;
-            } else if (arg == "multipleDisplay") {
+            } else if (arg == "-multipleDisplay") {
                 multipleDisplay = true;
-            } else if (arg == "player-four") {
+            } else if (arg == "-playerFour") {
                 numPlayers = maxPlayers;
             } else {
                 throw invalid_argument(Err::invalidCommandLineArg + string(argv[i]));

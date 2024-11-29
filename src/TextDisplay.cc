@@ -244,7 +244,7 @@ void TextObserver::player_line_4_5(const shared_ptr<Player>& player, int i, int 
         char toPrint = pnBaseChar(n) + i * numberOfLinksPerLine + j;
         shared_ptr<Link> currLink = player->getLink(toPrint, n);
         string type = "?";
-        if ((n == game->getCurrentTurn()) || (currLink->getIsVisible()) || game->getPlayer(n)->getEliminated()) {
+        if ((n == game->getCurrentTurn() && !multipleDisplay) || (currLink->getIsVisible()) || game->getPlayer(n)->getEliminated() || (n == playerNumber && multipleDisplay)) {
             type = (currLink->getType() == LinkType::Data) ? "D" : "V";
             type += to_string(currLink->getStrength());
         } 

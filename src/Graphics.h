@@ -13,6 +13,10 @@ class Graphics : public Observer {
     int playerNumber;
     bool multipleDisplay;
     Xwindow w;
+    int newRow(int size) const;
+    int newCol(int size) const;
+    bool valid(int num, bool row, int size) const;
+    void update(int &num, bool row) const;
     public:
     Graphics(weak_ptr<Game> &game, int playerNumber, bool multipleDisplay);
     void notify() override;

@@ -36,7 +36,7 @@ string Err::invalidCoordinates = "Invalid coordinates provided: outside the boar
 
 // Link errors
 string Err::invalidLinks = "Links may only be of the form [D1] [D2] [D3] [D4] [V1] [V2] [V3] [V4], and there must be exactly one of each form";
-string Err::invalidLink = "Link IDs are from a-h for player 1 and A-H from player 2";
+string Err::invalidLink = "Link IDs are: a-h for p1, A-H for p2, i-p for p3 and I-P for p4";
 
 // Move errors
 string Err::cannotMoveOpponentsLink = "You cannot move your opponent's link!";
