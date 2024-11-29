@@ -318,7 +318,7 @@ void Graphics::notify() {
                 } else if(playerFirewall == player2) {
                     fireWallString += p2Firewall;
                 } else if (playerFirewall == player3) {
-                    fireWallString += p3BaseChar;
+                    fireWallString += p3Firewall;
                 } else {
                     fireWallString += p4Firewall;
                 }

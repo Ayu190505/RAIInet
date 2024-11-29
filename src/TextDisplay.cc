@@ -144,7 +144,7 @@ void TextObserver::notify() {
                 } else if(playerFirewall == player2) {
                     out << setw(0) <<  p2Firewall;
                 } else if (playerFirewall == player3) {
-                    out << setw(0) <<  p3BaseChar;
+                    out << setw(0) <<  p3Firewall;
                 } else {
                     out << setw(0) <<  p4Firewall;
                 }
