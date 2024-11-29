@@ -128,6 +128,7 @@ void TextObserver::notify() {
                 out << setw(0) << '.';
             } else if (cell.isServerPort()) {
                 if (game->getPlayer(cell.getPlayersServerPort())->getEliminated()) out << '.';
+                else if (cell.isOwnServerPort(game->getCurrentTurn()) && cell.getBlocked()) out << '$';
                 else out << setw(0) << serverPort;
             } else if (cell.isWarp()) {
                 out << setw(0) << warpChar;
@@ -136,7 +137,7 @@ void TextObserver::notify() {
             } else if (cell.hasFirewall()){
                 if (game->getPlayer(cell.getPlayersFirewall())->getEliminated()) out << '.';
                 // else out << setw(0) << p1Firewall;
-                int playerFirewall = cell.getWhoseFirewall();
+                int playerFirewall = cell.getPlayersFirewall();
                 if (playerFirewall == player1) {
                     out << setw(0) <<  p1Firewall;
                 } else if(playerFirewall == player2) {

@@ -47,6 +47,9 @@ void validateLinkStatus(shared_ptr<Link> currLink,  Cell &oldcell);
 
 void imprisonCellsHandler(vector<Cell*> &trappedCells);
 
+void coordinateAbilityValidate(const string &abilityName, const Cell &cell);
+
+void validatePostMove(const Cell &newCell, const int currentTurn);
 
 Game::Game(int playerCount, const vector<string> &linkOrders, const vector<string> &abilities, bool graphicsEnabled) : playerCount{playerCount}, activePlayers{playerCount}, graphicsEnabled{graphicsEnabled} {
     const int size = (playerCount == 2) ? 8 : 10;
@@ -68,7 +71,7 @@ void Game::useAbility(int abilityNumber, const string &abilityName, const std::v
     shared_ptr<Ability> ability = players[playerIndex]->getAbility(abilityNumber);
     if (ability->getIsActivated()) throw runtime_error(Err::abilityAlreadyUsed(ability->getAbilityName(), ability->getAbilityID()));
 
-    if (abilityName == "Firewall" || abilityName == "Imprison") {
+    if (abilityName == "Firewall" || abilityName == "Imprison" || abilityName == "Omit" || abilityName == "Block") {
         int row = std::any_cast<int>(params[0]);
         int col = std::any_cast<int>(params[1]);
 
@@ -77,6 +80,8 @@ void Game::useAbility(int abilityNumber, const string &abilityName, const std::v
 
         if (abilityName == "Firewall") useFirewall(row, col);
         else if (abilityName == "Imprison") useImprison(row, col);
+        else if (abilityName == "Omit") useOmit(row, col);
+        else if (abilityName == "Block") useBlock(row, col);
     }
     else if (abilityName == "Warp") {
         int r1 = std::any_cast<int>(params[0]);
@@ -116,13 +121,8 @@ void Game::move(char link, const string &direction) {
     int newRow = 0, newCol = 0;
     getNewCords(newRow, newCol, currLink, direction);
     
-    // check in bounds
     Cell &oldCell = board->getCell(currLink->getRow(), currLink->getCol());
-    
-    // check if trying to move a downloaded/imprisoned link
     validateLinkStatus(currLink, oldCell);
-    
-    // valid iff player moves off opponents edge of the board
     bool validOB = validOutOfBounds(newRow, newCol); // throws error if not valid bounds
     if (validOB) {
         oldCell.setContent('.');
@@ -134,25 +134,13 @@ void Game::move(char link, const string &direction) {
             if (isActive(currentTurn)) break;
         }
         imprisonCellsHandler(trappedCells);
-        
-
         checkGameOver();
         notifyObservers();
         return;
     }
     // if bounds are valid, get the cells and see if it's self server port or contains self link
     Cell &newCell = board->getCell(newRow, newCol);
-
-    // locked check
-    if (newCell.isLocked()) throw runtime_error(Err::notInBounds); 
-    // self server port
-    if (newCell.isOwnServerPort(currentTurn)) throw runtime_error(Err::cannotDownloadOwnLink(true));
-    // self link
-    if (validPiLink(newCell.getContent(), currentTurn)) throw runtime_error(Err::cannotMoveOntoOwnLink);
-    // imprison cell already trapped with link
-    if ((newCell.isImprison()) && (!(newCell.isEmpty()))) throw runtime_error(Err::cannotBattleImprisonedLink);
-
-    // Validations done
+    validatePostMove(newCell, currentTurn);
     
     // set the cell that the link is being moved from to '.'
     oldCell.setContent('.');
@@ -161,6 +149,16 @@ void Game::move(char link, const string &direction) {
     if (newCell.isServerPort()) {
         int opponentIndex = newCell.getPlayersServerPort() - 1;
         if (!(players[opponentIndex]->getEliminated())) { // only download if player not eliminated
+            if (newCell.getBlocked()) {
+                // finds next player turn, who is currently active
+                for (int i = 0; i < playerCount; ++i) {
+                    currentTurn = (currentTurn % playerCount) + 1; // (1 % 2) + 1 
+                    if (isActive(currentTurn)) break;
+                }
+                oldCell.setContent(currLink->getId());
+                newCell.setBlocked(false);
+                throw runtime_error(Err::movedIntoBlockedSP);
+            }
             currLink->download();
             players[opponentIndex]->download(currLink);
         } else { // moving onto serverport of eliminated player
@@ -242,8 +240,17 @@ void Game::move(char link, const string &direction) {
     }
     // else if moving into a trap
     else if (newCell.isImprison()) {
+        int imprisonCount;
+        // lock for 2 rounds
+        if (currLink->getStrength() > 2) {
+            imprisonCount = (2 * playerCount) + 1;
+        }
+        // or lock for 1
+        else {
+            imprisonCount = playerCount + 1;
+        }
         newCell.setContent(currLink->getId());
-        newCell.setImprisonCounter(playerCount + 1);
+        newCell.setImprisonCounter(imprisonCount);
         currLink->setRow(newRow);
         currLink->setCol(newCol);
         trappedCells.push_back(&newCell);
@@ -280,19 +287,13 @@ void Game::move(char link, const string &direction) {
     }
 
     imprisonCellsHandler(trappedCells);
-
     checkGameOver();
     notifyObservers();
 }
 
 void Game::useFirewall(int row, int col) {
     Cell &cell = board->getCell(row, col);
-    // check if trying to place Firewall on a server port
-    if (cell.isServerPort()) throw runtime_error(Err::cannotUseAbilityonOtherAbility("Firewall", "Server Port"));
-    // check if trying to place firewall on a firewall
-    if (cell.hasFirewall()) throw runtime_error(Err::cannotUseAbilityonOtherAbility("Firewall", "Firewall"));
-    if (cell.isImprison()) throw runtime_error(Err::cannotUseAbilityonOtherAbility("Firewall", "Imprisoned cell"));
-    if (cell.isWarp()) throw runtime_error(Err::cannotUseAbilityonOtherAbility("Firewall", "Warp"));
+    coordinateAbilityValidate("Firewall", cell);
     // assuming we cannot place a firewall directly onto our opponents links
     for (int i = 0; i < playerCount; ++i) {
         if (i + 1 != currentTurn) {
@@ -306,13 +307,8 @@ void Game::useFirewall(int row, int col) {
 void Game::useWarp(int r1, int c1, int r2, int c2) {
     Cell &cell1 = board->getCell(r1, c1);
     Cell &cell2 = board->getCell(r2, c2);
-    
-    // maybe wanna move this into the cell setwarp function?
-    if (cell1.isServerPort() || cell2.isServerPort()) throw runtime_error(Err::cannotUseAbilityonOtherAbility("Warp", "Server Port"));
-    if (cell1.hasFirewall() || cell2.hasFirewall()) throw runtime_error(Err::cannotUseAbilityonOtherAbility("Warp", "Firewall"));
-    if (!(cell1.isEmpty() && cell2.isEmpty())) throw runtime_error(Err::cannotUseAbilityonOtherAbility("Warp", "Link"));
-    if (cell1.isWarp() || cell2.isWarp()) throw runtime_error(Err::cannotUseAbilityonOtherAbility("Warp", "Warp"));
-    if (cell1.isImprison() || cell2.isImprison()) throw runtime_error(Err::cannotUseAbilityonOtherAbility("Warp", "Imprison"));
+    coordinateAbilityValidate("Warp", cell1);
+    coordinateAbilityValidate("Warp", cell2);
 
     cell1.setWarp(true);
     cell1.setWarpCords(r2, c2);
@@ -322,16 +318,17 @@ void Game::useWarp(int r1, int c1, int r2, int c2) {
 
 void Game::useImprison(int row, int col) {
     Cell &cell = board->getCell(row, col);
-
-    if (cell.isServerPort()) throw runtime_error(Err::cannotUseAbilityonOtherAbility("Imprison", "Server Port"));
-    if (cell.hasFirewall()) throw runtime_error(Err::cannotUseAbilityonOtherAbility("Imprison", "Firewall"));
-    if (!(cell.isEmpty())) throw runtime_error(Err::cannotUseAbilityonOtherAbility("Imprison", "Link"));
-    if (cell.isWarp()) throw runtime_error(Err::cannotUseAbilityonOtherAbility("Imprison", "Warp"));
-    if (cell.isImprison()) throw runtime_error(Err::cannotUseAbilityonOtherAbility("Imprison", "Imprison"));
+    coordinateAbilityValidate("Imprison", cell);
 
     cell.setImprison(true);
     cell.setWhichPlayersImprison(currentTurn);
-    //trappedCells.push_back(&cell);
+}
+
+void Game::useOmit(int row, int col) {
+    Cell &cell = board->getCell(row, col);
+    coordinateAbilityValidate("Omit", cell);
+    
+    cell.setContent(' ');
 }
 
 void Game::useScan(char l) {
@@ -368,6 +365,8 @@ void Game::useDownload(char link) {
 
     // get the link to be downloaded and execute the download
     shared_ptr<Link> downloadedLink = players[otherPlayerIndex]->getLink(link, otherPlayerIndex + 1);
+    Cell &c = board->getCell(downloadedLink->getRow(), downloadedLink->getCol());
+    if (c.isImprison()) throw runtime_error(Err::cannotDownloadImprisonedLink);
 
     // line directly below checks if already downloaded, if so throws error
     downloadedLink->download();
@@ -377,6 +376,12 @@ void Game::useDownload(char link) {
     cell.setContent('.');
 }
 
+void Game::useBlock(int row, int col) {
+    Cell &c = board->getCell(row, col);
+    if (!c.isServerPort() || !c.isOwnServerPort(currentTurn)) throw runtime_error(Err::cannotUseBlock);
+    if (c.getBlocked()) throw runtime_error(Err::cannotUseAbilityonOtherAbility("Block", "Block"));
+    c.setBlocked(true);
+}
 
 void Game::usePolarise(char link) {
     // get the link to be polarised
@@ -386,7 +391,7 @@ void Game::usePolarise(char link) {
     }
     
     // check if already downloaded, then no point polarising
-    if (currLink->getIsDownloaded()) throw runtime_error(Err::isAlreadyDownloaded);
+    if (currLink->getIsDownloaded()) throw runtime_error(Err::LinkIsAlready("downloaded"));
     currLink->polarise();
 }
 
@@ -400,7 +405,7 @@ void Game::useTrojan(char link) {
     }
 
     // you can't apply trojan to a downloaded link
-    if (currLink->getIsDownloaded()) throw runtime_error(Err::isAlreadyDownloaded);
+    if (currLink->getIsDownloaded()) throw runtime_error(Err::LinkIsAlready("downloaded"));
     // the function below checks if the link is already a trojan
     currLink->trojan();
 }
@@ -415,7 +420,7 @@ void Game::useLinkBoost(char link) {
     shared_ptr<Link> currLink = players[playerIndex]->getLink(link, currentTurn);
 
     // if player tries to linkboost already downloaded link, return error
-    if (currLink->getIsDownloaded()) throw runtime_error(Err::isAlreadyDownloaded);
+    if (currLink->getIsDownloaded()) throw runtime_error(Err::LinkIsAlready("downloaded"));
     // this is executed if no errors thrown and updates ability state to being activated
     currLink->linkBoost();
 }
@@ -680,4 +685,21 @@ void imprisonCellsHandler(vector<Cell*> &trappedCells) {
             i->setImprison(false);
         }
     }
+}
+
+void coordinateAbilityValidate(const string &abilityName, const Cell &cell) {
+    if (cell.getContent() == ' ') throw runtime_error(Err::cannotInteractWithOmittedCell);
+    if (cell.isServerPort()) throw runtime_error(Err::cannotUseAbilityonOtherAbility(abilityName, "Server Port"));
+    if (cell.hasFirewall()) throw runtime_error(Err::cannotUseAbilityonOtherAbility(abilityName, "Firewall"));
+    if (abilityName != "Firewall" && !(cell.isEmpty())) throw runtime_error(Err::cannotUseAbilityonOtherAbility(abilityName, "Link"));
+    if (cell.isWarp()) throw runtime_error(Err::cannotUseAbilityonOtherAbility(abilityName, "Warp"));
+    if (cell.isImprison()) throw runtime_error(Err::cannotUseAbilityonOtherAbility(abilityName, "Imprison"));
+}
+
+void validatePostMove(const Cell &newCell, const int currentTurn) {
+    if (newCell.isLocked()) throw runtime_error(Err::notInBounds); 
+    if (newCell.isOwnServerPort(currentTurn)) throw runtime_error(Err::cannotDownloadOwnLink(true));
+    if (validPiLink(newCell.getContent(), currentTurn)) throw runtime_error(Err::cannotMoveOntoOwnLink);
+    if ((newCell.isImprison()) && (!(newCell.isEmpty()))) throw runtime_error(Err::cannotBattleImprisonedLink);
+    if (newCell.getContent() == ' ') throw runtime_error(Err::cannotInteractWithOmittedCell);
 }

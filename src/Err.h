@@ -23,10 +23,7 @@ struct Err {
     static string invalidFile;
     static string abilityUsedThisTurn;
     static string reenterCommand;
-    static string isAlreadyDownloaded;
-    static string isAlreadyVisible;
-    static string isAlreadyBoosted;
-    static string isAlreadyTrojan;
+    static string cannotDownloadImprisonedLink;
     static string cannotPlaceFirewallOnSP;
     static string cannotPlaceFirewallOnFw;
     static string cannotPlaceFirewallDirectlyOnOpp;
@@ -36,7 +33,11 @@ struct Err {
     static string cannotBattleImprisonedLink;
     static string notInBounds;
     static string cannotMoveOntoOwnLink;
-
+    static string cannotInteractWithOmittedCell;
+    static string cannotUseBlock;
+    static string movedIntoBlockedSP;
+    
+    static string LinkIsAlready(const string &what);
     static string cannotMoveLinkWithStatus(const string &status);
     static string cannotDownloadOwnLink(bool SP); // self server port and self side bound
     static string cannotUseAbilityOnOwnLink(const string &ability);

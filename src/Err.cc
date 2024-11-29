@@ -18,18 +18,17 @@ string Err::invalidPlayerNumber = "Cannot have players 3 or 4 for a two player g
 
 // Ability Errors
 string Err::invalidAbilityIndex = "Expected an ability index from [1, 5]";
+string Err::cannotDownloadImprisonedLink = "You can't download an Imprisoned Link";
 string Err::expectedCoordinatesForFireWall = "Expected coordinates from firewall in the form <row> <col>";
 string Err::expectedCoordinatesForWarp = "Expected coordinates from warp in the form <row1> <col1> <row2> <col2>";
 string Err::expectedLinkIdentity = "Expected a specification for which link to use ability on";
 string Err::abilityUsedThisTurn = "You may only use one ability per turn. You must move a link before you use any more abilites.";
-string Err::isAlreadyBoosted = "This link has already been boosted!";
-string Err::isAlreadyDownloaded = "This link has already been downloaded!";
-string Err::isAlreadyVisible = "This link is already visible!";
-string Err::isAlreadyTrojan = "This link is already a Trojan!";
 string Err::cannotPlaceFirewallOnSP = "You cannot place a firewall on a server port!";
 string Err::cannotPlaceFirewallOnFw = "You cannot place a firewall on another firewall!";
 string Err::cannotPlaceFirewallDirectlyOnOpp = "You cannot place a firewall directly on your opponent's link!";
 string Err::cannotMoveImprisonedLink = "You cannot move an imprisoned Link!";
+string Err::cannotInteractWithOmittedCell = "You can't interact with an Omitted cell";
+string Err::cannotUseBlock = "You can't use Block on a cell that isn't your Server Port";
 
 // Coordinate Errors
 string Err::invalidCoordinates = "Invalid coordinates provided: outside the board";
@@ -44,6 +43,7 @@ string Err::cannotMoveDownloadedLink = "You cannot move a downloaded link!";
 string Err::notInBounds = "Cannot move out of bounds from own edge or edge not belonging to any player";
 string Err::cannotMoveOntoOwnLink = "Cannot move onto your own link";
 string Err::cannotBattleImprisonedLink = "You can't battle an imprisoned Link";
+string Err::movedIntoBlockedSP = "You moved into a blocked SP and your round has been used up!";
 
 // Functions
 string Err::cannotDownloadOwnLink(bool SP) {
@@ -58,6 +58,10 @@ string Err::cannotUseAbilityOnOtherLink(const string &ability) {
 }
 string Err::abilityAlreadyUsed(const string &name, int index) {
     return name + " with id: " + std::to_string(index) +  " is already activated!";
+}
+
+string Err::LinkIsAlready(const string &what) {
+    return "This Link is already " + what + '!';
 }
 
 string Err::cannotUseAbilityonOtherAbility(const string &ability, const string &otherAbility) {
