@@ -69,6 +69,10 @@ char Cell::getContent() const {
     return c;
 }
 
+bool Cell::getBlocked() const {
+    return blocked;
+}
+
 bool Cell::hasFirewall() const {
     return whichPlayersFirewall != 0;
 }
@@ -141,10 +145,6 @@ void Cell::setFirewall(int playerNumber, bool status) {
     }
 }
 
-int Cell::getWhoseFirewall() const {
-    return whichPlayersFirewall;
-}
-
 void Cell::setImprison(bool b) {
     imprisonActive = b;
 }
@@ -168,4 +168,8 @@ void Cell::setWarp(bool what) {
 
 void Cell::setServerPort(bool b) {
     whichPlayersServerPort = 0;
+}
+
+void Cell::setBlocked(bool what) {
+    blocked = what;
 }

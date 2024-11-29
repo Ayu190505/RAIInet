@@ -17,18 +17,21 @@ class Cell {
     bool imprisonActive = false;
     int imprisonCounter = 0;
     int whichPlayersImprison = 0;
+    bool blocked = false;
+
     public:
     Cell() {}
     Cell(int row, int col, int size);
     Cell(const Cell &other);
 
+    // block
+    bool getBlocked() const;
+    void setBlocked(bool what);
     // firewall
     bool hasFirewall() const;
     bool hasOwnFirewall(int playerNumber) const;
     bool hasOpponnentFirewall(int playerNumber) const;
     int getPlayersFirewall() const;
-    int getWhoseFirewall() const;
-
     void setFirewall(int playerNumber, bool status);
 
     // serverPort
@@ -36,14 +39,12 @@ class Cell {
     bool isOwnServerPort(int playerNumber) const;
     bool isOpponentServerPort(int playerNumber) const;
     int getPlayersServerPort() const;
-
     void setServerPort(bool b); 
 
     // warp
     bool isWarp() const;
     int getWarpRow() const;
     int getWarpCol() const;
-
     void setWarpCords(int row, int col);
     void setWarp(bool what);
 
@@ -51,7 +52,6 @@ class Cell {
     bool isImprison() const;
     int getImprisonCounter() const; //
     int getWhichPlayersImprison() const;
-
     void setImprison(bool b); //
     void setImprisonCounter(int counter); //
     void setWhichPlayersImprison(int playerNum);

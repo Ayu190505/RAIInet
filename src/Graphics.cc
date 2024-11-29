@@ -222,7 +222,7 @@ void Graphics::notify() {
                         w.drawString(centerX, centerY, s);
                     }
                 } else if (cell.hasFirewall()) {
-                    int playerFirewall = cell.getWhoseFirewall();
+                    int playerFirewall = cell.getPlayersFirewall();
                     w.fillRectangle(x + 1, y + 1, cellSize - 2, cellSize - 2, Xwindow::Orange);
                     string fireWallString = "";
                     if (playerFirewall == player1) {
@@ -287,7 +287,7 @@ void Graphics::notify() {
                         w.drawString(centerX, centerY, s);
                     }
                 }  else if (cell.hasFirewall()) {
-                    int playerFirewall = cell.getWhoseFirewall();
+                    int playerFirewall = cell.getPlayersFirewall();
                     w.fillRectangle(x + 1, y + 1, cellSize - 2, cellSize - 2, Xwindow::Orange);
                     string fireWallString = "";
                     if (playerFirewall == player1) {

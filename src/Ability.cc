@@ -4,7 +4,7 @@
 #include "Err.h"
 #include <string>
 
-const std::string ValidAbilities = "LFDPSTIW";
+const std::string ValidAbilities = "LFDPSTIWOB";
 
 Ability::Ability(char code, int id) : id{id}, isActivated{false} {
     switch (code)
@@ -33,6 +33,12 @@ Ability::Ability(char code, int id) : id{id}, isActivated{false} {
             case 'W':   
                 ability = Abilities::Warp;
                 break;
+            case 'O':
+                ability = Abilities::Omit;
+                break;
+            case 'B':
+                ability = Abilities::Block;
+                break;
             default: throw(Err::invalidAbility() + ", hence " + std::to_string(code) + " is invalid.");
         }
 }
@@ -54,6 +60,8 @@ std::string Ability::getAbilityName(){
         case Abilities::Trojan:   return "Trojan";
         case Abilities::Imprison: return "Imprison";
         case Abilities::Warp: return "Warp";
+        case Abilities::Omit: return "Omit";
+        case Abilities::Block: return "Block";
     }
     return "";
 }
@@ -73,7 +81,7 @@ std::vector<std::string> Ability::getExpectedParams(const string &abilityName) {
     std::vector<std::string> expectedParams;
 
     // abilities applied to a coordinate
-    if (abilityName == "Firewall" || abilityName == "Imprison") {
+    if (abilityName == "Firewall" || abilityName == "Imprison" || abilityName == "Omit" || abilityName == "Block") {
         expectedParams = {"int", "int"};
     }
     // abilities applied to 2 coordinates

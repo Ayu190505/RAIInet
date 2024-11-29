@@ -60,7 +60,7 @@ void Link::setIsVisible(bool isVisible) {
 }
 
 void Link::linkBoost() {
-    if (stepSize == 2) throw runtime_error(Err::isAlreadyBoosted);
+    if (stepSize == 2) throw runtime_error(Err::LinkIsAlready("boosted"));
     stepSize += 1;
 }
 
@@ -69,18 +69,18 @@ void Link::polarise() {
 }
 
 void Link::scan() {
-    if (isVisible) throw runtime_error(Err::isAlreadyVisible);
+    if (isVisible) throw runtime_error(Err::LinkIsAlready("visible"));
     isVisible = true;
 }
 
 void Link::download() {
-    if (isDownloaded) throw runtime_error(Err::isAlreadyDownloaded);
+    if (isDownloaded) throw runtime_error(Err::LinkIsAlready("downloaded"));
     isDownloaded = true;
     isVisible = true;
 }
 
 void Link::trojan() {
-    if (isTrojan) throw runtime_error(Err::isAlreadyTrojan);
+    if (isTrojan) throw runtime_error(Err::LinkIsAlready("a trojan"));
     isTrojan = true;
 }
     
