@@ -1,0 +1,34 @@
+board
+abilities
+ability 3 4 0
+ability 3 0 0
+ability 3 1 4
+ability 3 0 4
+move d down
+abilities
+ability 1 0 4
+ability 1 1 1
+move A up
+ability 1 l
+move l right
+move M left
+move d left
+abilities
+ability 2 7 4 1 4
+move D up
+move L right
+move l right
+move L left
+move e down
+move D up
+board
+move i right
+move j right
+move J left
+move d rigt
+move d right
+move D up
+move K right
+move k right
+move L left
+move a down
