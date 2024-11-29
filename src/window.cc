@@ -91,7 +91,6 @@ void Xwindow::loadFont(string fontName) {
     if(fonts.find(fontName) == fonts.end()) {
         XFontStruct *font_info = XLoadQueryFont(d, fontName.c_str());
         if(!font_info) {
-            std::cerr << "Error loading font: " << fontName << std::endl;
             return;
         }
         fonts[fontName] = font_info->fid;

@@ -1,7 +1,6 @@
 #include "Graphics.h"
 #include <sstream>
 #include <vector>
-#include <iostream>
 #include "Ability.h"
 #include <thread>
 #include <chrono>
@@ -361,7 +360,7 @@ void Graphics::displayAbilities() {
     }
     auto ability = player->getAbility(abilitiesLen);
     abilities += to_string(ability->getAbilityID()) +  ": " + ability->getAbilityName() + "[" + (ability->getIsActivated() ? "Used]" : "X]");
-    string fontName = "lucidasans-10";
+    string fontName = "-*-helvetica-bold-r-normal--10-*-*-*-*-*-*-*";
     w.drawStringFont(0, windowHeight - 75, abilities, fontName, Xwindow::Black);
     chrono::milliseconds timespan(3000);
     this_thread::sleep_for(timespan);
@@ -374,7 +373,7 @@ int Graphics::getPlayerNumber() const {
 
 void Graphics::displayError(const string &err) {
     auto game = g.lock();
-    string fontName = "lucidasans-10";
+    string fontName = "-*-helvetica-bold-r-normal--10-*-*-*-*-*-*-*";
     w.drawStringFont(0, windowHeight - 75, err, fontName, Xwindow::Black);
     chrono::milliseconds timespan(3000);
     this_thread::sleep_for(timespan);
@@ -389,7 +388,7 @@ void Graphics::displayGameOver() {
     string toDisplay = "Player " + to_string(game->getPlayerWon()) + " Wins!";
     w.drawStringFont(50, 200, "Congratulations!!", fontName);
     w.drawStringFont(80, 300, toDisplay, fontName);
-    chrono::milliseconds timespan(10000);
+    chrono::milliseconds timespan(5000);
     this_thread::sleep_for(timespan);
 }
 

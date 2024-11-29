@@ -13,7 +13,6 @@ class Player {
     int id;
     int size;
     vector<shared_ptr<Link>> links;
-    vector<shared_ptr<Link>> downloadedLinks;
     vector<shared_ptr<Ability>> abilities;
     int numOfDataDownloaded, numOfVirusDownloaded, abilityCount;
     bool eliminated = false;
