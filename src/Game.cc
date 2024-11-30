@@ -244,11 +244,11 @@ void Game::move(char link, const string &direction) {
         int imprisonCount;
         // lock for 2 rounds
         if (currLink->getStrength() > 2) {
-            imprisonCount = (2 * playerCount) + 1;
+            imprisonCount = (2 * activePlayers) + 1;
         }
         // or lock for 1
         else {
-            imprisonCount = playerCount + 1;
+            imprisonCount = activePlayers + 1;
         }
         newCell.setContent(currLink->getId());
         newCell.setImprisonCounter(imprisonCount);
@@ -567,7 +567,7 @@ bool Game::validOutOfBounds(int row, int col) const {
         }
     }  
     // out of edge from own side returns wrong error message
-    throw runtime_error(Err::notInBounds); 
+    throw out_of_range(Err::notInBounds); 
     
 }
 
