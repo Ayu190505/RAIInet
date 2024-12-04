@@ -60,7 +60,6 @@ void Link::setIsVisible(bool isVisible) {
 }
 
 void Link::linkBoost() {
-    if (stepSize == 2) throw runtime_error(Err::LinkIsAlready("boosted"));
     stepSize += 1;
 }
 
